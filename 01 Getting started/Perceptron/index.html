@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="http://learnopengl.com 系列教程的简体中文翻译">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/01%20Getting%20started/02%20Creating%20a%20window/">
+        <link rel="canonical" href="https://learnopengl-cn.github.io/01%20Getting%20started/Perceptron/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>创建窗口 - LearnOpenGL CN</title>
+	<title>感知机 - LearnOpenGL CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -82,25 +82,25 @@
         
             
 <li >
-    <a href="../01%20OpenGL/">OpenGL</a>
+    <a href="../01%20OpenGL/">深度学习介绍</a>
 </li>
 
         
             
 <li class="active">
-    <a href="./">创建窗口</a>
+    <a href="./">感知机</a>
 </li>
 
         
             
 <li >
-    <a href="../03%20Hello%20Window/">你好，窗口</a>
+    <a href="../03%20Hello%20Window/">异或操作</a>
 </li>
 
         
             
 <li >
-    <a href="../04%20Hello%20Triangle/">你好，三角形</a>
+    <a href="../04%20Hello%20Triangle/">s型神经元</a>
 </li>
 
         
@@ -665,7 +665,7 @@
 <script type="math/tex; mode=display">\sum_{i=1}^{3}{X_{i}W_{i}}</script>
 来表示当前感知器获得的输入。 对应的我们需要根据这些输入知道感知器该有什么输出。因此我们需要一个阈值对输入进行判断，又由于我们只想知道当前输入是否要触发感知器作出反应，所以我们将输出表示为0或1两种值，对应的就是不触发输出和触发输出。因此这个感知器可以表示为
 <script type="math/tex; mode=display">output = \left\{\begin{matrix}
- & 0 & if &\sum_{i=1}^{3}{X_{i}W_{i}} <= threshold \\ 
+ & 0 & if &\sum_{i=1}^{3}{X_{i}W_{i}} < threshold \\ 
  & 1 & if &\sum_{i=1}^{3}{X_{i}W_{i}} > threshold
 \end{matrix}\right.</script>
 </p>
@@ -673,7 +673,7 @@
 <h2 id="_3">举个例子</h2>
 <p>假如我们想用这个感知器帮助我们选择是否去一家餐厅。我们的判断原因可能包含1）距离2）口味 3）价格三种。我们希望在阈值超过1.5我们就去这家餐厅。</p>
 <p>如果A餐厅距离近，价格低，但口味差，因此输入就是 （1，0，1），如果权重都为1，那么输出就是2，大于阈值1.5，所以我们会选择去这家餐厅。</p>
-<p>如果我们对口味特别看重，将他的权重设置为2，但是对距离和价格不看重，将他们的权重设为0.5。此时得到输入是（1<em>0.5+0</em>2+1*0.5) = 1,小于阈值，我们就不会选择这家餐厅。</p>
+<p>如果我们对口味特别看重，将他的权重设置为2，但是对距离和价格不看重，将他们的权重设为0.5。此时得到输入是（1 * 0.5+0 * 2+1 * 0.5) = 1,小于阈值，我们就不会选择这家餐厅。</p>
 <p>现在是不是发现这个小小的感知器确实可以帮助我们做一些判断了？</p>
 <h2 id="_4">偏置</h2>
 <p>对于上面的公式我们并不是特别满意，因为我们的输出需要跟阈值进行对比，但我们只想知道输入和0对比会得到什么样的输出。
@@ -681,7 +681,7 @@
 <script type="math/tex; mode=display">b=-threshold</script>
 这样上式就变成了
 <script type="math/tex; mode=display">output = \left\{\begin{matrix}
- & 0 &  if &\sum_{i=1}^{3}{X_{i}W_{i}} + b <= 0 \\ 
+ & 0 &  if &\sum_{i=1}^{3}{X_{i}W_{i}} + b < 0 \\ 
  & 1 & if &\sum_{i=1}^{3}{X_{i}W_{i}} + b > 0
 \end{matrix}\right.</script>
 </p>
@@ -690,7 +690,7 @@
 </p>
 <p>感知器的判断公式就进一步变成了
 <script type="math/tex; mode=display">output = \left\{\begin{matrix}
- & 0 & if  &x\cdot w + b <= 0 \\ 
+ & 0 & if  &x\cdot w + b < 0 \\ 
  & 1 & if  &x\cdot w + b > 0
 \end{matrix}\right.</script>
 </p>
