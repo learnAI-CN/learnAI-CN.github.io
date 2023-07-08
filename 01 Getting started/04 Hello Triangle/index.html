@@ -106,37 +106,19 @@
         
             
 <li >
-    <a href="../05%20Shaders/">着色器</a>
+    <a href="../05%20Shaders/">损失函数</a>
 </li>
 
         
             
 <li >
-    <a href="../06%20Textures/">纹理</a>
+    <a href="../06%20Textures/">反向传播算法</a>
 </li>
 
         
             
 <li >
-    <a href="../07%20Transformations/">变换</a>
-</li>
-
-        
-            
-<li >
-    <a href="../08%20Coordinate%20Systems/">坐标系统</a>
-</li>
-
-        
-            
-<li >
-    <a href="../09%20Camera/">摄像机</a>
-</li>
-
-        
-            
-<li >
-    <a href="../10%20Review/">复习</a>
+    <a href="../07%20Transformations/">自学习异或操作</a>
 </li>
 
         
@@ -146,12 +128,12 @@
                     
                         
   <li class="dropdown-submenu">
-    <a tabindex="-1" class="nav-title">光照</a>
+    <a tabindex="-1" class="nav-title">实现minist</a>
     <ul class="dropdown-menu">
         
             
 <li >
-    <a href="../../02%20Lighting/01%20Colors/">颜色</a>
+    <a href="../../02%20Lighting/01%20Colors/">卷积层</a>
 </li>
 
         
@@ -645,11 +627,7 @@
         
             <li><a href="#sigmoid">sigmoid函数</a></li>
         
-            <li><a href="#_2">自我学习</a></li>
-        
-            <li><a href="#_3">损失函数</a></li>
-        
-            <li><a href="#_4">设计网络实现异或操作</a></li>
+            <li><a href="#_2">实现异或操作</a></li>
         
     
     </ul>
@@ -685,114 +663,23 @@
 <p>这样我们就对感知器引入了<def>平滑特性</def>。他可以对于输入和权重带来的微小改变产生输出的微小变化。现在我们用数学公式表示一下这个sigmoid函数
 <script type="math/tex; mode=display">sigmoid(z)\equiv \frac{1}{1+e^{-z}}</script>
 其中z表示 <script type="math/tex">x * w + b</script>，这样上式就可以表示为
-<script type="math/tex; mode=display">out = \delta(z) = sigmoid(z) = \frac{1}{1+exp(x * w + b\}}</script>
+<script type="math/tex; mode=display">out = \sigma(z) = sigmoid(z) = \frac{1}{1+exp(x * w + b\}}</script>
 而这，就是<def>S型神经元</def>的表达式了。另外我们之后在描述时候就不再使用感知器了，而是使用<def>神经元</def>来表示这样一个对输入作出反映的单元。</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>需要注意的是，S型神经元的激活函数并非只有simgoid函数一种，他还可以包含类似tanh等激活函数，这些不同的函数具体作用和应用场景又有不同，但此时暂时不过多介绍。</p>
 </div>
-<h2 id="_2">自我学习</h2>
-<p>经过替换激活函数，我们有了一个可以表示非线性拟合的神经元了。接下来我们回想一下上节让神经元实现逻辑门时候的代码。每个神经元的权重和偏置都是我们人为设定的。但是，权重和偏置可是神经元独一无二的特性啊，如果都手工设定，怎么能展示他们的个性呢？
+<h2 id="_2">实现异或操作</h2>
+<p>现在我们回想一下让神经元实现逻辑门时候的代码。每个神经元的权重和偏置都是我们人为设定的。但是，权重和偏置可是神经元独一无二的特性啊，如果都手工设定，怎么能展示他们的个性呢？
 有没有一种方法，可以让神经元根据任务的不同，自己去学习自己独属的权重和偏置呢？</p>
 <p>答案当然是可以的，但正如我们之前所说，一个神经元的力量太微小了，他不能完成某些任务。所以当我们希望神经元自己根据不同任务学习权重和偏置时，我们一般需要先搭建一个神经网络，他可能长下面这样子</p>
 <p><img alt="" src="../../img/01/04/net.jpg" /></p>
 <p>他和我们之前的多层感知机是不是相同，但这里每个小组件都替换成了神经元，因此整体也被我们称为<def>神经网络</def>。</p>
 <p>想象一下我们正在玩1-100的猜数字游戏，A先想出一个数字，B去猜，如果大了就继续猜更小的数字，如果小了就继续猜更大的数字，直到最后猜出那个正确的数字。</p>
-<p>我们梳理一下这个过程，首先它是一个反馈过程。需要知道猜测的结果是大还是小，还要知道根据这个结果怎么去修改猜测的值。对应到神经元的学习中，就是我们需要一个<def>损失函数</def>去判断神经元输出的结果和目标结果差距有多少。
-还需要一个<def>反向传播算法</def>来告诉神经元该怎么修改。通过多次尝试学习，网络就会根据目标自己让每一个神经元学习各自权重和偏置，进而使整个网络实现我们设定的目标。</p>
-<p>上面突然就提到了两个新概念，而且都是复杂而又困难的。我们现在先简单引入一下损失函数，至于<def>反向回传算法</def>将在下一节仔细讲解。目前你只需要只要我们会用到他就好了。</p>
-<h2 id="_3">损失函数</h2>
-<p>损失函数可以网络学习中一个非常重要的概念，用于衡量模型的预测值与真实值之间的差异，即模型的误差大小。损失函数的作用是指导模型的训练过程，帮助模型不断地优化，最终得到更准确的预测结果。</p>
-<p>他就像一个神经网络的领路人，但这里我们先简单介绍一个最基本的<def>L1 loss</def>。他用来表示当前网络的输出y与目标(ground truth,gt)之间的距离，表示为
-<script type="math/tex; mode=display">L1 \ \ loss(y, gt) = (y-gt)</script>
-</p>
-<p>当预测值和目标值差距远的时候，对应的损失值就大，相反如果距离近，损失值就小。</p>
-<p>当然深度学习发展这么长时间产生了许多不同的损失函数，他们有各自不同的优势及应用场景，但他们目的都是衡量网络预测的结果和目标结果之间的差距。之后我们会尽量详细的介绍不同损失函数的作用以及区别。</p>
-<p>目前我们只需要先了解这个L1 loss就好，我们将用他来设计一个可以自己学习的神经网络，实现异或操作。</p>
-<h2 id="_4">设计网络实现异或操作</h2>
-<p>这里假设你已经对python有了基础的知识，首先我们需要导入基本的模块</p>
-<pre><code class="language-python">import numpy as np
-import matplotlib.pyplot as plt
-</code></pre>
-<p>其中numpy是我们用于计算的库，plt则是后续用来观察的库</p>
-<p>然后我们可以定义输入的数据和期望得到的结果,输入是一个二维数组，用来枚举所有可能的输入情况。输出为对输入进行异或操作期望的结果。</p>
-<pre><code class="language-python">x = np.array([[0,0,1,1],[0,1,0,1]])
-y = np.array([0,1,1,0])
-</code></pre>
-<p>接下来我们需要定义一个神经网络，他的输入是2，因为每次x的取值是2。隐藏层定义为3，这个是任意取得，当然你也可以选择2或者4。最后设计输出层为1，因为输出只可能有一个值。
-这样我们的代码就可以添加上这样的超参</p>
-<pre><code class="language-python">inputN, hiddenN, outN = 2, 3, 1
-</code></pre>
-<p>这时候网络如果可视化的话，它长下图这样子</p>
-<p><img alt="" src="../../img/01/04/net4.jpg" /></p>
-<p>我们定义一下他前向传输的过程，首先需要输入到隐藏层的权重<script type="math/tex">w_{1}</script>和偏置<script type="math/tex">b_{1}</script>，以及隐藏层到输出层的权重<script type="math/tex">w_{2}</script>和偏置<script type="math/tex">b_{2}</script>，他们用代码表示为</p>
-<pre><code class="language-python">w1 = np.random.rand(hiddenN, inputN)
-b1 = np.random.rand(hiddenN,1)
-w2 = np.random.rand(outN, hiddenN)
-b2 = np.random.rand(outN,1)
-</code></pre>
-<p>回忆一下s型神经元的表达式，我们似乎缺一个激活函数<script type="math/tex">\delta</script>,他用代码表示为</p>
-<pre><code class="language-python">def sigmoid(x):
-    return 1.0 / (1 + np.exp(-x))
-</code></pre>
-<p>现在就可以写出前向传播的完整过程了</p>
-<pre><code class="language-python">def forward(x,w1,b1,w2,b2):
-    # 必须将b1变成列向量
-    z1 = np.dot(w1,x) + b1
-    a1 = sigmoid(z1)
-    z2 = np.dot(w2,a1) + b2
-    a2 = sigmoid(z2)
-    return z1,a1,z2,a2
-</code></pre>
-<p>通过前向传播我们就能得到网络的预测结果了，但是更重要的是我们需要<def>反向传播算法</def>和<def>损失函数</def>来修正神经元的值，由于我们在下一节才能讲解反向传播函数，所以此时我们先列出他的实现，并不要求深入探究具体原因。</p>
-<pre><code class="language-python">def backward(x,y,z1,a1,z2,a2,w1,w2):
-    bs = x.shape[1]
-    dz2 = a2 - y
-    dw2 = np.dot(dz2, a1.T) / bs
-    db2 = np.sum(dz2, axis=1,keepdims=True) / bs
-    dz1 = np.dot(w2.T,dz2)*a1*(1-a1)
-    dw1 = np.dot(dz1, x.T) / bs
-    db1 = np.sum(dz1, axis=1,keepdims=True) / bs
-    # 对dw1和dw2的数据的尺寸进行设置
-    dw1 = dw1.reshape(w1.shape)
-    db1 = db1.reshape(b1.shape)
-    dw2 = dw2.reshape(w2.shape)
-    db2 = db2.reshape(b2.shape)
-    return dw1,db1,dw2,db2
-
-</code></pre>
-<p>损失函数定义为上面提到的l1 loss</p>
-<pre><code class="language-python">loss = np.sum(y - out)
-</code></pre>
-<p>接下来就是通过一定的迭代次数训练该网络，他的整个过程是</p>
-<pre><code class="language-python">import matplotlib.pyplot as plt
-# 对超参数进行设置
-lr = 0.01
-epochs = 10000
-losses = []
-bs = x.shape[1]
-# 进行训练
-for epoch in range(epochs):
-    # 进行前项传播
-    z1,a1,z2,a2 = forward(x,w1,b1,w2,b2)
-    loss = -np.sum(y * np.log(a2) + (1-y)*np.log(1-a2)) / bs
-    losses.append(loss)
-    # 进行反向传播
-    dw1,db1,dw2,db2 = backward(x,y,z1,a1,z2,a2,w1,w2)
-    w1 -= lr * dw1
-    b1 -= lr * db1
-    w2 -= lr * dw2
-    b2 -= lr * db2
-
-# 绘制损失函数曲线
-plt.plot(losses)
-plt.xlabel(&quot;epoch&quot;)
-plt.ylabel(&quot;loss value&quot;)
-
-
-</code></pre>
-<p>如果代码正确的话，你将得到一张这样的损失函数图像</p>
-<p>可以看到输出和gt已经很像了，到这里我们就实现了设计一个神经网络，并通过迭代学习是他达到一个功能。以后你遇到的所有内容都是对这个项目的拓展和补充修改。此时你唯独对反向传播还完全不理解，那继续进行下一节的学习吧。</p>
+<p>我们梳理一下这个过程，首先它是一个经过多次尝试的反馈过程。每次需要知道猜测的结果是大还是小，还要知道根据这个结果怎么去修改猜测的值。对应到神经元的学习中，我们需要多次学习，让网络在每一次学习过程中逐渐修改每个神经元的权重和偏置，进而使整体网络趋近目标。我们称每次学习过程为一次<def>迭代&lt;\def&gt;。
+在每次迭代过程中，我们需要一个<def>损失函数</def>去判断神经元输出的结果和目标结果差距有多少。
+还需要一个<def>反向传播算法</def>来告诉神经元该怎么修改。</p>
+<p>上面提到的<def>损失函数</def>和<def>反向传播算法</def>是两个新的概念，而且都是复杂而又困难的。在接下来的两节我们将逐一学习。</p>
 
 <div id="disqus_thread"></div>
 <script>
