@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="http://learnopengl.com 系列教程的简体中文翻译">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/01%20Assimp/">
+        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/05%20DenseNet/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>AlexNet - LearnOpenGL CN</title>
+	<title>DenseNet - LearnOpenGL CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -195,8 +195,8 @@
     <ul class="dropdown-menu">
         
             
-<li class="active">
-    <a href="./">AlexNet</a>
+<li >
+    <a href="../01%20Assimp/">AlexNet</a>
 </li>
 
         
@@ -219,8 +219,8 @@
 
         
             
-<li >
-    <a href="../05%20DenseNet/">DenseNet</a>
+<li class="active">
+    <a href="./">DenseNet</a>
 </li>
 
         
@@ -611,12 +611,12 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../../02%20Lighting/07%20Review/">
+                    <a rel="next" href="../04%20ResNet/">
                         <i class="fa fa-arrow-left"></i> 上一节
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../02%20Mesh/">
+                    <a rel="prev" href="../../04%20Advanced%20OpenGL/01%20Depth%20testing/">
                         下一节 <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -645,177 +645,82 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#alexnet">AlexNet</a></li>
+        <li class="main active"><a href="#densenet">DenseNet</a></li>
         
-            <li><a href="#_1">说在本章之前</a></li>
+            <li><a href="#densenet_1">DenseNet特点</a></li>
         
-            <li><a href="#alexnet_1">AlexNet特点</a></li>
+            <li><a href="#densenet_2">DenseNet引入</a></li>
         
-            <li><a href="#alexnet_2">AlexNet简介</a></li>
+            <li><a href="#_1">模型介绍</a></li>
         
-            <li><a href="#alexnet_3">AlexNet网络结构</a></li>
+            <li><a href="#_2">从泰勒展开的角度</a></li>
         
-            <li><a href="#relu">ReLU介绍</a></li>
+            <li><a href="#highway-network">从HighWay Network 的角度</a></li>
         
-            <li><a href="#dropout">Dropout</a></li>
-        
-            <li><a href="#_2">大数据集训练</a></li>
-        
-            <li><a href="#_3">数据增扩</a></li>
-        
-            <li><a href="#maxpooling">使用重叠的maxpooling</a></li>
-        
-            <li><a href="#lrn">使用LRN归一化层</a></li>
+            <li><a href="#_3">从深度监督的角度</a></li>
         
             <li><a href="#_4">代码实现</a></li>
-        
-            <li><a href="#_7">参考链接</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="alexnet">AlexNet</h1>
-<h2 id="_1">说在本章之前</h2>
-<p>关于本章的几个经典网络，相关文章浩如烟海，层出不穷。我一直在想我该通过怎样的方式才能讲出所有您所需要的内容。为此，
-我希望</p>
-<p>1）在每个文章之前将他的特点先简单罗列出来，您可能刚看到还不明白，但您可以在之后详细内容中遇到这些点，此时就需要您稍加留意了。</p>
-<p>2）我们在每节都会提供网络的代码，希望您能实现cifar10/cifar100分类任务。同时我会罗列一下改进的方向，希望您能通过修改代码更深入的理解网络内容。</p>
-<h2 id="alexnet_1">AlexNet特点</h2>
+<h1 id="densenet">DenseNet</h1>
+<p>DenseNet（Densely Connected Convolutional Networks）是一种深度卷积神经网络模型，由Zhuang Liu（清华大学）、Gao Huang（康奈尔大学）等人于2017年提出。
+DenseNet的主要贡献在于提出了密集连接（dense connection）的思想，可以在保持网络深度和参数数量的同时，提高网络的准确性和泛化能力</p>
+<h2 id="densenet_1">DenseNet特点</h2>
 <ul>
-<li>使用ReLU激活函数</li>
-<li>使用DropOut避免过拟合</li>
-<li>采用大数据集训练</li>
-<li>对数据集进行增扩操作</li>
-<li>多GPU训练</li>
-<li>使用重叠的maxpooling</li>
-<li>使用LRN归一化层</li>
+<li>提出密集连接</li>
 </ul>
-<h2 id="alexnet_2">AlexNet简介</h2>
-<p>虽然LeNet在80年代就被提出，但当时计算机硬件和软件的性能都比较有限，不足以支持更深、更宽的神经网络模型，因此LeNet的应用范围受到了一定的限制。
-人们不确定卷积神经网络是否能处理更复杂更大的数据。</p>
-<p>随着计算机硬件和软件的发展，特别是GPU的出现，神经网络模型的计算能力得到了很大的提升，可以更加高效地训练深度卷积神经网络模型。
-同时，随着数据集的不断增加，也为深度卷积神经网络的发展提供了更加丰富的数据支持。</p>
-<p>在这种背景下，由Alex Krizhevsky等人在2012年提出AlexNet，主要用于ILSVRC2012图像分类比赛，获得了当年的冠军。他可以算作现代深度卷积神经网路的开山之作，为后来的卷积神经网络模型的发展奠定了基础。
-AlexNet采用了更深、更宽的网络结构，采用了较大的卷积核和ReLU激活函数，使用了局部响应归一化（Local Response Normalization，LRN）处理，同时全连接层的设计也有所不同。他的设计更加复杂，可以处理更加复杂的数据，如高分辨率的图像数据。</p>
-<h2 id="alexnet_3">AlexNet网络结构</h2>
-<p>AlexNet网络结构如下：</p>
-<p><img alt="" src="../../img/03/01/AlexNet-1.png" /></p>
-<p>网络主要包含五个卷积层（Convlution），三个重叠的最大池化层（Overlapping MaxPooling）和三个全连接层（Full Connected，FC）。
-以下将整体介绍不同块的构成，可能有些组件您现在还不了解，但我希望能先给你一个整体拼图，之后会具体介绍单独的细节。</p>
-<ul>
-<li>Input：256x256的RGB三通道图像。因此输入维度是training_numx256x256x3。</li>
-<li>Layer1：Conv+ReLU+Pooling+LRN。其中Conv采用96个11x11大小的卷积核，步长为4。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
-<li>Layer2：Conv+ReLU+Pooling+LRN。其中Conv采用256个5x5的卷积核，步长为1，padding=2。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
-<li>Layer3：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
-<li>Layer4：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
-<li>Layer5：Conv+ReLU+Pooling+Dropout，其中Conv采用256个3x3的卷积核，步长为1，padding=1。Overlapping MaxPooling采用3x3卷积核，步长为2。Dropout rate=0.5。</li>
-<li>Layer6：FC+ReLU+Dropout，输出4096个神经元。ropout rate=0.5。</li>
-<li>Layer7：FC+ReLU，输出4096个神经元</li>
-<li>Output：FC+ReLU，1000个神经元。</li>
-</ul>
-<h2 id="relu">ReLU介绍</h2>
-<p>之前我们在激活函数简单介绍过ReLU，此处详细介绍AlexNet为什么采用ReLU引入非线性。
-首先引入两个概念，饱和函数和非饱和函数
-- 饱和函数：当自变量趋于无穷大的时候，其值有界。如tanh函数值域为[-1, 1]
-- 非饱和函数：当自变量趋于无穷大的时候，其值也趋向无穷大。如ReLU函数当输入趋于无穷大，值也为无穷大。</p>
-<p>由于非饱和函数比饱和函数在梯度下降时收敛速度更快，所以作者采用ReLU替代tanH函数。下图展示了在一个4层的卷积网络中使用ReLU函数和tanH函数对比。
-在CIFAR-10数据集上达到25%的训练错误率RelU要比相同条件下使用tanh函数快6倍。</p>
-<p><img alt="" src="../../img/03/01/tanh.png" /></p>
-<p>此外，ReLU函数由于是线性的，所以其导数始终为1，可以极大减少计算量。</p>
-<h2 id="dropout">Dropout</h2>
-<p>引入Dropout主要是为了防止过拟合。在神经网络中Dropout通过修改神经网络本身结构来实现，对于某一层的神经元，通过定义的概率将神经元置为0，
-这个神经元就不参与前向和后向传播，就如同在网络中被删除了一样，同时保持输入层与输出层神经元的个数不变，然后按照神经网络的学习方法进行参数更新。
-在下一次迭代中，又重新随机删除一些神经元（置为0），直至训练结束。</p>
-<p><img alt="" src="../../img/03/01/dropout.jpg" /></p>
-<p>需要注意的是，Dropout只在训练中将某些神经元置0，测试时依旧采用所有的参数。就像演戏时候随机几个部队完成某项任务，真正打仗时候所有部队一起出动。
-在另一个意义上来讲，你可以把每次训练时候留下的神经元作为一个网络，这样其实训练过程训练了多个网络，最终的结果由这些多个网络共同决定。</p>
-<h2 id="_2">大数据集训练</h2>
-<p>作者在论文中认为自己的贡献点包含：训练了一个很大的CNN来处理大规模数据并取得了目前最好的成绩。这一点毋庸置疑，因为AlexNet确实是大数据集
-训练深度卷积神经网络的先河。那之前为什么没人使用大数据集训练呢？因为1）之前缺乏大数据集。但这个显然不是主要原因，毕竟缺乏可以采集嘛。
-2）运算资源不足。之前计算机硬件的性能也非常有限，神经网络的训练需要花费大量的时间和计算资源，这也限制了神经网络在大规模数据集上的应用。
-3）容易过拟合。所以AlexNet采用了更大的网络，Dropout，数据增扩等方式解决过拟合，提升网络泛化性。而这几点直到目前依旧是解决过拟合问题的主要途径。</p>
-<h2 id="_3">数据增扩</h2>
-<p>AlexNet在训练时，在数据扩充（data augmentation）这样处理： </p>
-<p>（1）随机裁剪，对256×256的图片进行随机裁剪到224×224，然后进行水平翻转，相当于将样本数量增加了（（256-224）^2）×2=2048倍； </p>
-<p>（2）测试的时候，对左上、右上、左下、右下、中间分别做了5次裁剪，然后翻转，共10个裁剪，之后对结果求平均。作者说，如果不做随机裁剪，大网络基本上都过拟合； </p>
-<p>（3）对RGB空间做PCA（主成分分析），然后对主成分做一个（0, 0.1）的高斯扰动，也就是对颜色、光照作变换，结果使错误率又下降了1%。</p>
-<h2 id="maxpooling">使用重叠的maxpooling</h2>
-<p>此前CNN中普遍使用平均池化，AlexNet全部使用最大池化，避免平均池化的模糊化效果。
-并且AlexNet中提出让步长比池化核的尺寸小的观点，这样池化层的输出之间会有重叠和覆盖，提升了特征的丰富性。实际使用kernel size=3，stride=2。
-但能否提升特征丰富度很难说，因为后来的网络设计一般采用相同的kernel size 和 步长。</p>
-<h2 id="lrn">使用LRN归一化层</h2>
-<p>这一点放在最后是因为这个好像真没用，至少是后来的网络设计不常用。
-由于ReLU函数不像tanh和sigmoid一样有一个有限的值域区间，所以在ReLU之后需要进行归一化处理，
-LRN的思想来源于神经生物学中一个叫做“侧抑制”的概念，指的是被激活的神经元抑制周围的神经元。
-所以对局部神经元的活动创建竞争机制，使得其中响应比较大的值变得相对更大，并抑制其他反馈较小的神经元，增强了模型的泛化能力。</p>
+<h2 id="densenet_2">DenseNet引入</h2>
+<p>从网络结构及设计思路来说，DenseNet属于对ResNet的完善和补充，如果单独讲解其结构显得过于平淡。因此我希望能从不同角度来介绍一下这个网络。给您一个不一样的思考。</p>
+<h2 id="_1">模型介绍</h2>
+<p>DenseNet的设计和ResNet类似，也是模块化复用。它包含三个密集块（ Dense Block）,两个相邻块之间的层称为过渡层，由1×1 Conv 和 2×2 平均池化构成。
+在最后一个密集块结束时，执行全局平均池化，然后附加一个 softmax 分类器。</p>
+<p><img alt="" src="../../img/03/05/DenseNet2.png" /></p>
+<h3 id="denseblock">DenseBlock</h3>
+<p>DenseBlock主要有两个设计特点，1）稠密连接 2）concat</p>
+<p>在稠密模块内，为了能够保证前馈的特性，每一层将之前的所有层作为输入进行拼接，并将输出的特征图传递给之后的所有层。该好处是可以实现特征复用。
+结构如下图所示。</p>
+<p><img alt="" src="../../img/03/05/Denseblock.jpg" /></p>
+<p>因此，第l层有l个输入，这些输入是该层之前的所有卷积块（block）的特征图。如果每个函数 /( H_l /) 都产生 k 个特征图，之后的第层就有  /( k_0 + k*(l-1) /) 
+个特征图作为输入，其中 /( k_0 /) 表示该层的通道数。而k即称为增长速率(Grow rate),也就是每层输出的特征数。</p>
+<p>该设计的缺点是显而易见的，每层输入呈线性增加，极其耗费显存。因此相对于Resnet使用超大的输出特征数，作者将增长速率置为12，这样可以保证网络更少的参数。</p>
+<p>另外一个问题就出现了，如此少的特征数量会不会影响网络的表达效果？答案是不会。因为作者认为传统的前馈网络，每层得到上层信息后要重新通过学习来保留有效信息。
+对Resnet的研究也发现，网络通过加入自身来保留信息，很多层其实没有发生作用，可以随机丢弃掉。因此DenseNet每次只需要很少的特征图学习增加的信息即可，
+之前需要保留的信息会通过短连接保留，两者共同组成&rdquo;集体知识（collective knowledge）&rdquo;，即concat后的输入。</p>
+<h2 id="_2">从泰勒展开的角度</h2>
+<p>这个观点主要来自于李沐大佬。对于任意函数的泰勒展开式（Taylor expansion），它把这个函数分解成越来越高阶的项。在 x 接近 0 时，</p>
+<p><img alt="" src="../../img/03/05/math1.jpg" /></p>
+<p>上节ResNet的公式可以表达为：</p>
+<p>
+<script type="math/tex; mode=display"> F(x) = x + H(x) </script>
+</p>
+<p>也就是一个简单的线性项和一个更复杂的非线性项，对比一下泰勒展开，我们可以认为ResNet是泰勒展开的前两项。如果我们想将 
+f 拓展成超过两部分的信息呢？ 一种方案便是DenseNet。</p>
+<p><img alt="" src="../../img/03/05/compare.jpg" /></p>
+<p>ResNet 和 DenseNet 的关键区别在于，DenseNet 输出是连接（用图中的[,] 表示）而不是如 ResNet 的简单相加。 因此，在应用越来越复杂的函数序列后，我们执行从 
+x 到其展开式的映射：</p>
+<p><img alt="" src="../../img/03/05/math2.jpg" /></p>
+<p>最后，将这些展开式结合到多层感知机中，再次减少特征的数量。 实现起来非常简单：我们不需要添加术语，而是将它们连接起来。 
+DenseNet这个名字由变量之间的“稠密连接”而得来，最后一层与之前的所有层紧密相连。 稠密连接如下图所示</p>
+<p><img alt="" src="../../img/03/05/DenseNet.jpg" /></p>
+<h2 id="highway-network">从HighWay Network 的角度</h2>
+<p>HighWay Network是15年一篇通过引入“Highway”机制，进而有效地训练非常深的网络的论文。
+简单来说，论文中基于门机制引入了transform gate T 和carry gate C，输出output是由tranform input和carry input组成。</p>
+<p>
+<script type="math/tex; mode=display"> y = H(x, W_H)*T(x, W_T) + x*C(x, W_C) </script>
+</p>
+<p>通过这种方式，HighWay网络可以很轻松的优化上百层的网络。旁路被认为是使深层网络容易训练关键因素。 随后的ResNet可以看作Highway 网络的一种特殊形式，
+它通过使用本身作为通路，进一步验证了旁路的重要性。</p>
+<p>受此启发，DenseNet通过密集连接使网络的每一层都可以通过旁路进行信息交流。</p>
+<h2 id="_3">从深度监督的角度</h2>
+<p>作者提出DenseNets有一个优点是它改善了网络中信息和梯度的传递，这就让网络更容易训练。每一层都可以直接利用损失函数的梯度以及最开始的输入信息，
+相当于是一种隐形的深度监督（implicit deep supervision）。这有助于训练更深的网络</p>
+<p>回想一下GoogleNet使用的分类辅助器分枝，迫使中间层也学习判断特征。而前的深度监督网络（DSN）中在每一隐含层都加了分类器。</p>
+<p>DenseNet通过短连接，让每一层都可以从损失函数中获得监督信息。</p>
 <h2 id="_4">代码实现</h2>
-<p>这里我们希望能用AlexNet分类Cifar10。首先要介绍以下cifar10。
-CIFAR-10数据集是机器学习和计算机视觉领域中常用的数据集之一，被广泛用于图像分类、目标识别、物体检测等任务的研究和评估。
-由于CIFAR-10数据集的图像尺寸较小、类别较少，因此相对于其他数据集，它的计算资源和训练时间要求较低，适合用于模型设计和算法研究的快速验证。
-CIFAR-10数据集包含10个类别的32x32像素的RGB彩色图像，每个类别有6000张图像，共有50000张训练图像和10000张测试图像。</p>
-<h3 id="_5">数据加载</h3>
-<pre><code class="language-python">import torch
-import torchvision
-from torchvision import transforms as transforms
-
-transform = transforms.Compose(
-    [transforms.RandomHorizontalFlip(), 
-     transforms.ToTensor(), 
-     transforms.Normalize((0.5, 0.5, 0.5), 
-                          (0.5, 0.5, 0.5))])
-
-cifar10_classes = ('plane', 'car', 'bird', 'cat',
-                   'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
-
-
-def cifar10_loader(train=True, batch_size=128):
-    set = torchvision.datasets.CIFAR10(root='~/data', train=train,
-                                       download=True, transform=transform)
-    loader = torch.utils.data.DataLoader(set, batch_size=batch_size,
-                                         shuffle=True, num_workers=4)
-    return loader
-</code></pre>
-<h3 id="_6">模型定义</h3>
-<pre><code class="language-python">class AlexNet(nn.Module):
-
-    def __init__(self, num_classes=10):
-        super(AlexNet, self).__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Conv2d(64, 192, kernel_size=3, padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Conv2d(192, 384, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(384, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3, stride=2)
-        )
-        self.fc_layers = nn.Sequential(
-            nn.Dropout(0.6),
-            nn.Linear(4096, 2048),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.6),
-            nn.Linear(2048, 2048),
-            nn.ReLU(inplace=True),
-            nn.Linear(2048, num_classes),
-        )
-
-    def forward(self, x):
-        conv_features = self.features(x)
-        flatten = conv_features.view(conv_features.size(0), -1)
-        fc = self.fc_layers(flatten)
-        return fc
-</code></pre>
-<h2 id="_7">参考链接</h2>
-<p>[1] https://learnopencv.com/understanding-alexnet/
-[2] https://github.com/AbhishekTaur/AlexNet-CIFAR-10</p>
 
 <div id="disqus_thread"></div>
 <script>

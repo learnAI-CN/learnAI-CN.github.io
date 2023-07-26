@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="http://learnopengl.com 系列教程的简体中文翻译">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/01%20Assimp/">
+        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/04%20ResNet/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>AlexNet - LearnOpenGL CN</title>
+	<title>ResNet - LearnOpenGL CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -195,8 +195,8 @@
     <ul class="dropdown-menu">
         
             
-<li class="active">
-    <a href="./">AlexNet</a>
+<li >
+    <a href="../01%20Assimp/">AlexNet</a>
 </li>
 
         
@@ -213,8 +213,8 @@
 
         
             
-<li >
-    <a href="../04%20ResNet/">ResNet</a>
+<li class="active">
+    <a href="./">ResNet</a>
 </li>
 
         
@@ -611,12 +611,12 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../../02%20Lighting/07%20Review/">
+                    <a rel="next" href="../03%20Model/">
                         <i class="fa fa-arrow-left"></i> 上一节
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../02%20Mesh/">
+                    <a rel="prev" href="../05%20DenseNet/">
                         下一节 <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -645,177 +645,241 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#alexnet">AlexNet</a></li>
+        <li class="main active"><a href="#resnet">ResNet</a></li>
         
-            <li><a href="#_1">说在本章之前</a></li>
+            <li><a href="#resnet_1">ResNet特点</a></li>
         
-            <li><a href="#alexnet_1">AlexNet特点</a></li>
+            <li><a href="#resnet_2">ResNet引入</a></li>
         
-            <li><a href="#alexnet_2">AlexNet简介</a></li>
+            <li><a href="#_1">退化问题</a></li>
         
-            <li><a href="#alexnet_3">AlexNet网络结构</a></li>
+            <li><a href="#_2">残差连接</a></li>
         
-            <li><a href="#relu">ReLU介绍</a></li>
-        
-            <li><a href="#dropout">Dropout</a></li>
-        
-            <li><a href="#_2">大数据集训练</a></li>
-        
-            <li><a href="#_3">数据增扩</a></li>
-        
-            <li><a href="#maxpooling">使用重叠的maxpooling</a></li>
-        
-            <li><a href="#lrn">使用LRN归一化层</a></li>
+            <li><a href="#_3">网络结构</a></li>
         
             <li><a href="#_4">代码实现</a></li>
         
-            <li><a href="#_7">参考链接</a></li>
+            <li><a href="#_5">讨论</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="alexnet">AlexNet</h1>
-<h2 id="_1">说在本章之前</h2>
-<p>关于本章的几个经典网络，相关文章浩如烟海，层出不穷。我一直在想我该通过怎样的方式才能讲出所有您所需要的内容。为此，
-我希望</p>
-<p>1）在每个文章之前将他的特点先简单罗列出来，您可能刚看到还不明白，但您可以在之后详细内容中遇到这些点，此时就需要您稍加留意了。</p>
-<p>2）我们在每节都会提供网络的代码，希望您能实现cifar10/cifar100分类任务。同时我会罗列一下改进的方向，希望您能通过修改代码更深入的理解网络内容。</p>
-<h2 id="alexnet_1">AlexNet特点</h2>
+<h1 id="resnet">ResNet</h1>
+<p>ResNet（Residual Network）是由微软亚洲研究院的何凯明等人于2015年提出的一种深度卷积神经网络模型，是目前最为流行和广泛应用的卷积神经网络之一。
+ResNet的主要贡献在于提出了残差学习的思路，可以解决深度卷积神经网络中的梯度消失和模型退化等问题，从而实现了更深的网络结构和更好的性能表现。</p>
+<h2 id="resnet_1">ResNet特点</h2>
 <ul>
-<li>使用ReLU激活函数</li>
-<li>使用DropOut避免过拟合</li>
-<li>采用大数据集训练</li>
-<li>对数据集进行增扩操作</li>
-<li>多GPU训练</li>
-<li>使用重叠的maxpooling</li>
-<li>使用LRN归一化层</li>
+<li>提出残差学习</li>
 </ul>
-<h2 id="alexnet_2">AlexNet简介</h2>
-<p>虽然LeNet在80年代就被提出，但当时计算机硬件和软件的性能都比较有限，不足以支持更深、更宽的神经网络模型，因此LeNet的应用范围受到了一定的限制。
-人们不确定卷积神经网络是否能处理更复杂更大的数据。</p>
-<p>随着计算机硬件和软件的发展，特别是GPU的出现，神经网络模型的计算能力得到了很大的提升，可以更加高效地训练深度卷积神经网络模型。
-同时，随着数据集的不断增加，也为深度卷积神经网络的发展提供了更加丰富的数据支持。</p>
-<p>在这种背景下，由Alex Krizhevsky等人在2012年提出AlexNet，主要用于ILSVRC2012图像分类比赛，获得了当年的冠军。他可以算作现代深度卷积神经网路的开山之作，为后来的卷积神经网络模型的发展奠定了基础。
-AlexNet采用了更深、更宽的网络结构，采用了较大的卷积核和ReLU激活函数，使用了局部响应归一化（Local Response Normalization，LRN）处理，同时全连接层的设计也有所不同。他的设计更加复杂，可以处理更加复杂的数据，如高分辨率的图像数据。</p>
-<h2 id="alexnet_3">AlexNet网络结构</h2>
-<p>AlexNet网络结构如下：</p>
-<p><img alt="" src="../../img/03/01/AlexNet-1.png" /></p>
-<p>网络主要包含五个卷积层（Convlution），三个重叠的最大池化层（Overlapping MaxPooling）和三个全连接层（Full Connected，FC）。
-以下将整体介绍不同块的构成，可能有些组件您现在还不了解，但我希望能先给你一个整体拼图，之后会具体介绍单独的细节。</p>
-<ul>
-<li>Input：256x256的RGB三通道图像。因此输入维度是training_numx256x256x3。</li>
-<li>Layer1：Conv+ReLU+Pooling+LRN。其中Conv采用96个11x11大小的卷积核，步长为4。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
-<li>Layer2：Conv+ReLU+Pooling+LRN。其中Conv采用256个5x5的卷积核，步长为1，padding=2。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
-<li>Layer3：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
-<li>Layer4：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
-<li>Layer5：Conv+ReLU+Pooling+Dropout，其中Conv采用256个3x3的卷积核，步长为1，padding=1。Overlapping MaxPooling采用3x3卷积核，步长为2。Dropout rate=0.5。</li>
-<li>Layer6：FC+ReLU+Dropout，输出4096个神经元。ropout rate=0.5。</li>
-<li>Layer7：FC+ReLU，输出4096个神经元</li>
-<li>Output：FC+ReLU，1000个神经元。</li>
-</ul>
-<h2 id="relu">ReLU介绍</h2>
-<p>之前我们在激活函数简单介绍过ReLU，此处详细介绍AlexNet为什么采用ReLU引入非线性。
-首先引入两个概念，饱和函数和非饱和函数
-- 饱和函数：当自变量趋于无穷大的时候，其值有界。如tanh函数值域为[-1, 1]
-- 非饱和函数：当自变量趋于无穷大的时候，其值也趋向无穷大。如ReLU函数当输入趋于无穷大，值也为无穷大。</p>
-<p>由于非饱和函数比饱和函数在梯度下降时收敛速度更快，所以作者采用ReLU替代tanH函数。下图展示了在一个4层的卷积网络中使用ReLU函数和tanH函数对比。
-在CIFAR-10数据集上达到25%的训练错误率RelU要比相同条件下使用tanh函数快6倍。</p>
-<p><img alt="" src="../../img/03/01/tanh.png" /></p>
-<p>此外，ReLU函数由于是线性的，所以其导数始终为1，可以极大减少计算量。</p>
-<h2 id="dropout">Dropout</h2>
-<p>引入Dropout主要是为了防止过拟合。在神经网络中Dropout通过修改神经网络本身结构来实现，对于某一层的神经元，通过定义的概率将神经元置为0，
-这个神经元就不参与前向和后向传播，就如同在网络中被删除了一样，同时保持输入层与输出层神经元的个数不变，然后按照神经网络的学习方法进行参数更新。
-在下一次迭代中，又重新随机删除一些神经元（置为0），直至训练结束。</p>
-<p><img alt="" src="../../img/03/01/dropout.jpg" /></p>
-<p>需要注意的是，Dropout只在训练中将某些神经元置0，测试时依旧采用所有的参数。就像演戏时候随机几个部队完成某项任务，真正打仗时候所有部队一起出动。
-在另一个意义上来讲，你可以把每次训练时候留下的神经元作为一个网络，这样其实训练过程训练了多个网络，最终的结果由这些多个网络共同决定。</p>
-<h2 id="_2">大数据集训练</h2>
-<p>作者在论文中认为自己的贡献点包含：训练了一个很大的CNN来处理大规模数据并取得了目前最好的成绩。这一点毋庸置疑，因为AlexNet确实是大数据集
-训练深度卷积神经网络的先河。那之前为什么没人使用大数据集训练呢？因为1）之前缺乏大数据集。但这个显然不是主要原因，毕竟缺乏可以采集嘛。
-2）运算资源不足。之前计算机硬件的性能也非常有限，神经网络的训练需要花费大量的时间和计算资源，这也限制了神经网络在大规模数据集上的应用。
-3）容易过拟合。所以AlexNet采用了更大的网络，Dropout，数据增扩等方式解决过拟合，提升网络泛化性。而这几点直到目前依旧是解决过拟合问题的主要途径。</p>
-<h2 id="_3">数据增扩</h2>
-<p>AlexNet在训练时，在数据扩充（data augmentation）这样处理： </p>
-<p>（1）随机裁剪，对256×256的图片进行随机裁剪到224×224，然后进行水平翻转，相当于将样本数量增加了（（256-224）^2）×2=2048倍； </p>
-<p>（2）测试的时候，对左上、右上、左下、右下、中间分别做了5次裁剪，然后翻转，共10个裁剪，之后对结果求平均。作者说，如果不做随机裁剪，大网络基本上都过拟合； </p>
-<p>（3）对RGB空间做PCA（主成分分析），然后对主成分做一个（0, 0.1）的高斯扰动，也就是对颜色、光照作变换，结果使错误率又下降了1%。</p>
-<h2 id="maxpooling">使用重叠的maxpooling</h2>
-<p>此前CNN中普遍使用平均池化，AlexNet全部使用最大池化，避免平均池化的模糊化效果。
-并且AlexNet中提出让步长比池化核的尺寸小的观点，这样池化层的输出之间会有重叠和覆盖，提升了特征的丰富性。实际使用kernel size=3，stride=2。
-但能否提升特征丰富度很难说，因为后来的网络设计一般采用相同的kernel size 和 步长。</p>
-<h2 id="lrn">使用LRN归一化层</h2>
-<p>这一点放在最后是因为这个好像真没用，至少是后来的网络设计不常用。
-由于ReLU函数不像tanh和sigmoid一样有一个有限的值域区间，所以在ReLU之后需要进行归一化处理，
-LRN的思想来源于神经生物学中一个叫做“侧抑制”的概念，指的是被激活的神经元抑制周围的神经元。
-所以对局部神经元的活动创建竞争机制，使得其中响应比较大的值变得相对更大，并抑制其他反馈较小的神经元，增强了模型的泛化能力。</p>
+<h2 id="resnet_2">ResNet引入</h2>
+<p>终于来到了大名鼎鼎的ResNet，这是一篇无论是什么时候去读都不嫌晚，读多少遍都不觉多的经典论文。我希望能尽可能详细的向您讲解该论文。</p>
+<p>在之前的网络设计中可以发现网络的深度至关重要。深度网络自然地将低/中/高级特征和分类器以端到端多层方式进行集成，特征的“级别”可以通过堆叠层的数量（深度）来丰富。
+如此来说提升网络的性能的唯一障碍就是训练时会遇到的梯度消失/爆炸问题。而这个问题通过标准初始化和BN在很大程度上已经解决，这使得数十层的网络能通过具有反向传播的随机梯度下降（SGD）开始收敛。
+网络设计岂不是至此可以高枕无忧了，只需要增加网络层数就可以。但本文发现当网络层数上升时，性能并没有增加。</p>
+<h2 id="_1">退化问题</h2>
+<p>作者在实验中发现了两个现象。1）随着网络深度的增加，准确率达到饱和然后迅速下降。但这种下降不是由过拟合引起的。
+2）在适当的深度模型上添加更多的层会导致更高的训练误差。这两个现象被称为退化问题，实验过程可以如下图表示</p>
+<p><img alt="" src="../../img/03/04/tuihua.jpg" /></p>
+<p>首先来解释一下第一个问题，第一个问题提到的「准确率迅速下降」并非图中某条准确率曲线的突然下降。而是说单独的网络层数与准确率的关系，就类似于下图。</p>
+<p><img alt="" src="../../img/03/04/tuihua1.png" /></p>
+<p>这张图是我随便做的层数-准确率的关系图，数据并不精准，只是形象的表述作者的意思。横轴为层数，纵轴为准确率。关键是作者说这种下降并非过拟合引起的。</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>过拟合，是指网络参数太多的情况下，拟合能力太强导致的训练准确率提升，测试准确率降低的情况。</p>
+</div>
+<p>再来说一下第二个问题，增加网络层数反而训练loss降低。这是挺奇怪的问题，因为56层的拟合能力必然比20层高，如果20层的网络存在最优拟合选项，
+那56层网络必然能够训练出相同的拟合效果，为何准确率反而降低了？即使以最极端的情况，添加的层是恒等映射，其他层是从学习到的较浅模型的拷贝。
+但为什么实验不符合预期呢？说明网络很难使用多个非线性层来近似恒等映射。</p>
+<h2 id="_2">残差连接</h2>
+<p>那我们就自己设计一个连接学习恒等映射。所以作者通过引入深度残差学习框架解决了退化问题。 如下图所示,原来我们希望这个网络块学习直接的映射关系H(x),
+现在我们让他学习H(x)和输入x之间的残差F(x)。</p>
+<p><img alt="" src="../../img/03/04/resblock.jpg" /></p>
+<p>其中</p>
+<p>
+<script type="math/tex; mode=display"> H(x) = F(x) + x </script>
+</p>
+<p>作者认为这样让网络学习残差映射比原始的、未参考的映射更容易优化。在极端情况下，如果一个恒等映射是最优的，那么将残差置为零比通过一堆非线性层来拟合恒等映射更容易。</p>
+<p>将x直接连接到输出的设计被称为 快捷连接（shortcut connection），他可以跨过一层或多层网络简单地执行恒等映射。在实现上既不增加额外的参数也不增加计算复杂度。</p>
+<p>发现通过实验可以发现：1）我们极深的残差网络易于优化，但当深度增加时，对应的“简单”网络（简单堆叠层）表现出更高的训练误差；
+2）我们的深度残差网络可以从大大增加的深度中轻松获得准确性收益，生成的结果实质上比以前的网络更好。</p>
+<p>也就是说训练时候收敛效果更好了，也更快了。测试时候更深的网络性能更好了。</p>
+<h2 id="_3">网络结构</h2>
+<p>首先作者设计了如下两个网络中使用的模块</p>
+<p><img alt="" src="../../img/03/04/resblock2.jpg" /></p>
+<p>其中左侧是ResNet-34的构建块，右侧是ResNet-50/101/152的构建块，称作&rdquo;bottleneck&rdquo;。虽然本文包含了两层或者三层，但更多的层也是可以的。不过作者说如果只有一层没有优势。</p>
+<p>bottleneck结构就是前面先用1 x 1卷积降维，后面再用1 x 1卷积升维以符合维度大小，这样做可以大大减少计算量。注意bottleneck中3 x 3的卷积层只有一个</p>
+<p>通过上面的模块，便可以构建不同层数的网络，构建方式如下：</p>
+<p><img alt="" src="../../img/03/04/resnet.jpg" /></p>
+<p>其中表哥你第一列的ConvX区分不同阶段（stage），每个阶段之间使用步长为2的卷积来进行下采样。倒数第二层输出的feature map后面是全局平均池化，
+也就是每个feature map求平均值获得一维向量，因为ImageNet输出是1000个类别，所以再连接一层1000个神经元的全连接层，最后再接上一个Softmax。</p>
+<p>现在有个问题，ResNet50/101/152的的第一个stage的输入channel维度都是64，跨层连接之后维度并不匹配，所以这里不是恒等映射，还会加一个升维的操作。
+升维有两种方式：第一种是直接全补0，这样做优势是不会增加网络的参数；第二种是1 x 1卷积升维</p>
 <h2 id="_4">代码实现</h2>
-<p>这里我们希望能用AlexNet分类Cifar10。首先要介绍以下cifar10。
-CIFAR-10数据集是机器学习和计算机视觉领域中常用的数据集之一，被广泛用于图像分类、目标识别、物体检测等任务的研究和评估。
-由于CIFAR-10数据集的图像尺寸较小、类别较少，因此相对于其他数据集，它的计算资源和训练时间要求较低，适合用于模型设计和算法研究的快速验证。
-CIFAR-10数据集包含10个类别的32x32像素的RGB彩色图像，每个类别有6000张图像，共有50000张训练图像和10000张测试图像。</p>
-<h3 id="_5">数据加载</h3>
-<pre><code class="language-python">import torch
-import torchvision
-from torchvision import transforms as transforms
+<p>基础网络实现如下</p>
+<pre><code class="language-python">class BasicBlock(nn.Module):
+    &quot;&quot;&quot;Basic Block for resnet 18 and resnet 34
 
-transform = transforms.Compose(
-    [transforms.RandomHorizontalFlip(), 
-     transforms.ToTensor(), 
-     transforms.Normalize((0.5, 0.5, 0.5), 
-                          (0.5, 0.5, 0.5))])
+    &quot;&quot;&quot;
 
-cifar10_classes = ('plane', 'car', 'bird', 'cat',
-                   'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    #BasicBlock and BottleNeck block
+    #have different output size
+    #we use class attribute expansion
+    #to distinct
+    expansion = 1
 
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
 
-def cifar10_loader(train=True, batch_size=128):
-    set = torchvision.datasets.CIFAR10(root='~/data', train=train,
-                                       download=True, transform=transform)
-    loader = torch.utils.data.DataLoader(set, batch_size=batch_size,
-                                         shuffle=True, num_workers=4)
-    return loader
-</code></pre>
-<h3 id="_6">模型定义</h3>
-<pre><code class="language-python">class AlexNet(nn.Module):
-
-    def __init__(self, num_classes=10):
-        super(AlexNet, self).__init__()
-        self.features = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2),
+        #residual function
+        self.residual_function = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Conv2d(64, 192, kernel_size=3, padding=2),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=2),
-            nn.Conv2d(192, 384, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(384, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(256, 256, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(kernel_size=3, stride=2)
+            nn.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels * BasicBlock.expansion)
         )
-        self.fc_layers = nn.Sequential(
-            nn.Dropout(0.6),
-            nn.Linear(4096, 2048),
-            nn.ReLU(inplace=True),
-            nn.Dropout(0.6),
-            nn.Linear(2048, 2048),
-            nn.ReLU(inplace=True),
-            nn.Linear(2048, num_classes),
-        )
+
+        #shortcut
+        self.shortcut = nn.Sequential()
+
+        #the shortcut output dimension is not the same with residual function
+        #use 1*1 convolution to match the dimension
+        if stride != 1 or in_channels != BasicBlock.expansion * out_channels:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels * BasicBlock.expansion)
+            )
 
     def forward(self, x):
-        conv_features = self.features(x)
-        flatten = conv_features.view(conv_features.size(0), -1)
-        fc = self.fc_layers(flatten)
-        return fc
+        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
 </code></pre>
-<h2 id="_7">参考链接</h2>
-<p>[1] https://learnopencv.com/understanding-alexnet/
-[2] https://github.com/AbhishekTaur/AlexNet-CIFAR-10</p>
+<p>BottleNeck实现如下</p>
+<pre><code class="language-python">class BottleNeck(nn.Module):
+    &quot;&quot;&quot;Residual block for resnet over 50 layers
+
+    &quot;&quot;&quot;
+    expansion = 4
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
+        self.residual_function = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, stride=stride, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels * BottleNeck.expansion, kernel_size=1, bias=False),
+            nn.BatchNorm2d(out_channels * BottleNeck.expansion),
+        )
+
+        self.shortcut = nn.Sequential()
+
+        if stride != 1 or in_channels != out_channels * BottleNeck.expansion:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels * BottleNeck.expansion, stride=stride, kernel_size=1, bias=False),
+                nn.BatchNorm2d(out_channels * BottleNeck.expansion)
+            )
+
+    def forward(self, x):
+        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
+</code></pre>
+<p>网络实现如下</p>
+<pre><code class="language-python">class ResNet(nn.Module):
+
+    def __init__(self, block, num_block, num_classes=100):
+        super().__init__()
+
+        self.in_channels = 64
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True))
+        #we use a different inputsize than the original paper
+        #so conv2_x's stride is 1
+        self.conv2_x = self._make_layer(block, 64, num_block[0], 1)
+        self.conv3_x = self._make_layer(block, 128, num_block[1], 2)
+        self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
+        self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
+
+    def _make_layer(self, block, out_channels, num_blocks, stride):
+        &quot;&quot;&quot;make resnet layers(by layer i didnt mean this 'layer' was the
+        same as a neuron netowork layer, ex. conv layer), one layer may
+        contain more than one residual block
+
+        Args:
+            block: block type, basic block or bottle neck block
+            out_channels: output depth channel number of this layer
+            num_blocks: how many blocks per layer
+            stride: the stride of the first block of this layer
+        Return:
+            return a resnet layer
+        &quot;&quot;&quot;
+
+        # we have num_block blocks per layer, the first block
+        # could be 1 or 2, other blocks would always be 1
+        strides = [stride] + [1] * (num_blocks - 1)
+        layers = []
+        for stride in strides:
+            layers.append(block(self.in_channels, out_channels, stride))
+            self.in_channels = out_channels * block.expansion
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        output = self.conv1(x)
+        output = self.conv2_x(output)
+        output = self.conv3_x(output)
+        output = self.conv4_x(output)
+        output = self.conv5_x(output)
+        output = self.avg_pool(output)
+        output = output.view(output.size(0), -1)
+        output = self.fc(output)
+
+        return output
+
+
+def resnet18():
+    &quot;&quot;&quot; return a ResNet 18 object
+    &quot;&quot;&quot;
+    return ResNet(BasicBlock, [2, 2, 2, 2])
+
+def resnet34():
+    &quot;&quot;&quot; return a ResNet 34 object
+    &quot;&quot;&quot;
+    return ResNet(BasicBlock, [3, 4, 6, 3])
+
+def resnet50():
+    &quot;&quot;&quot; return a ResNet 50 object
+    &quot;&quot;&quot;
+    return ResNet(BottleNeck, [3, 4, 6, 3])
+
+def resnet101():
+    &quot;&quot;&quot; return a ResNet 101 object
+    &quot;&quot;&quot;
+    return ResNet(BottleNeck, [3, 4, 23, 3])
+
+def resnet152():
+    &quot;&quot;&quot; return a ResNet 152 object
+    &quot;&quot;&quot;
+    return ResNet(BottleNeck, [3, 8, 36, 3])
+</code></pre>
+<p>通过这个代码我们也可以看到使用相同块堆叠设计网络的简易之处，可以很方便的提升网络层数。且代码非常简洁。</p>
+<h2 id="_5">讨论</h2>
+<p>这部分并非掌握的地方，如果暂时不了解没有关系，可以等之后再来看看。</p>
+<p>残差结构为什么有效？</p>
+<ul>
+<li>自适应深度：网络退化问题就体现了多层网络难以拟合恒等映射这种情况，也就是说H(x)难以拟合x，
+但使用了残差结构之后，拟合恒等映射变得很容易，直接把网络参数全学习到为0，只留下那个恒等映射的跨层连接即可。
+于是当网络不需要这么深时，中间的恒等映射就可以多一点，反之就可以少一点。</li>
+<li>“差分放大器”：假设最优H(x)更接近恒等映射，那么网络更容易发现除恒等映射之外微小的波动</li>
+<li>模型集成：整个ResNet类似于多个网络的集成，原因是删除ResNet的部分网络结点不影响整个网络的性能，但VGGNet会崩溃，</li>
+<li>缓解梯度消失：针对一个残差结构对输入 x 求导就可以知道，由于跨层连接的存在，总梯度在F(x)对x的导数基础上还会加1</li>
+</ul>
 
 <div id="disqus_thread"></div>
 <script>
