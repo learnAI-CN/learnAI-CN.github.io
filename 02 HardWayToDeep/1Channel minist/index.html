@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="http://learnopengl.com 系列教程的简体中文翻译">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/04%20ResNet/">
+        <link rel="canonical" href="https://learnopengl-cn.github.io/02%20HardWayToDeep/1Channel%20minist/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>ResNet - LearnOpenGL CN</title>
+	<title>minist实现 - LearnOpenGL CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -138,20 +138,20 @@
     <ul class="dropdown-menu">
         
             
-<li >
-    <a href="../../02%20HardWayToDeep/1Channel%20minist/">minist实现</a>
+<li class="active">
+    <a href="./">minist实现</a>
 </li>
 
         
             
 <li >
-    <a href="../../02%20HardWayToDeep/07%20Gradient%20vanishing/">梯度消失/爆炸</a>
+    <a href="../07%20Gradient%20vanishing/">梯度消失/爆炸</a>
 </li>
 
         
             
 <li >
-    <a href="../../02%20HardWayToDeep/overfitting/">过拟合/欠拟合</a>
+    <a href="../overfitting/">过拟合/欠拟合</a>
 </li>
 
         
@@ -229,31 +229,31 @@
         
             
 <li >
-    <a href="../01%20Assimp/">AlexNet</a>
+    <a href="../../03%20Model%20Loading/01%20Assimp/">AlexNet</a>
 </li>
 
         
             
 <li >
-    <a href="../02%20Mesh/">VGG</a>
+    <a href="../../03%20Model%20Loading/02%20Mesh/">VGG</a>
 </li>
 
         
             
 <li >
-    <a href="../03%20Model/">GoogLeNet</a>
-</li>
-
-        
-            
-<li class="active">
-    <a href="./">ResNet</a>
+    <a href="../../03%20Model%20Loading/03%20Model/">GoogLeNet</a>
 </li>
 
         
             
 <li >
-    <a href="../05%20DenseNet/">DenseNet</a>
+    <a href="../../03%20Model%20Loading/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/05%20DenseNet/">DenseNet</a>
 </li>
 
         
@@ -644,12 +644,12 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../03%20Model/">
+                    <a rel="next" href="../../01%20Getting%20started/08%20Transformations/">
                         <i class="fa fa-arrow-left"></i> 上一节
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../05%20DenseNet/">
+                    <a rel="prev" href="../07%20Gradient%20vanishing/">
                         下一节 <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -678,241 +678,239 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#resnet">ResNet</a></li>
+        <li class="main active"><a href="#minist">Minist基础实现</a></li>
         
-            <li><a href="#resnet_1">ResNet特点</a></li>
+            <li><a href="#_1">初始化网络</a></li>
         
-            <li><a href="#resnet_2">ResNet引入</a></li>
+            <li><a href="#_2">前向传播</a></li>
         
-            <li><a href="#_1">退化问题</a></li>
+            <li><a href="#_3">随机梯度下降</a></li>
         
-            <li><a href="#_2">残差连接</a></li>
+            <li><a href="#_4">更新参数</a></li>
         
-            <li><a href="#_3">网络结构</a></li>
+            <li><a href="#_5">数据加载</a></li>
         
-            <li><a href="#_4">代码实现</a></li>
-        
-            <li><a href="#_5">讨论</a></li>
+            <li><a href="#_6">开始训练</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="resnet">ResNet</h1>
-<p>ResNet（Residual Network）是由微软亚洲研究院的何凯明等人于2015年提出的一种深度卷积神经网络模型，是目前最为流行和广泛应用的卷积神经网络之一。
-ResNet的主要贡献在于提出了残差学习的思路，可以解决深度卷积神经网络中的梯度消失和模型退化等问题，从而实现了更深的网络结构和更好的性能表现。</p>
-<h2 id="resnet_1">ResNet特点</h2>
-<ul>
-<li>提出残差学习</li>
-</ul>
-<h2 id="resnet_2">ResNet引入</h2>
-<p>终于来到了大名鼎鼎的ResNet，这是一篇无论是什么时候去读都不嫌晚，读多少遍都不觉多的经典论文。我希望能尽可能详细的向您讲解该论文。</p>
-<p>在之前的网络设计中可以发现网络的深度至关重要。深度网络自然地将低/中/高级特征和分类器以端到端多层方式进行集成，特征的“级别”可以通过堆叠层的数量（深度）来丰富。
-如此来说提升网络的性能的唯一障碍就是训练时会遇到的梯度消失/爆炸问题。而这个问题通过标准初始化和BN在很大程度上已经解决，这使得数十层的网络能通过具有反向传播的随机梯度下降（SGD）开始收敛。
-网络设计岂不是至此可以高枕无忧了，只需要增加网络层数就可以。但本文发现当网络层数上升时，性能并没有增加。</p>
-<h2 id="_1">退化问题</h2>
-<p>作者在实验中发现了两个现象。1）随着网络深度的增加，准确率达到饱和然后迅速下降。但这种下降不是由过拟合引起的。
-2）在适当的深度模型上添加更多的层会导致更高的训练误差。这两个现象被称为退化问题，实验过程可以如下图表示</p>
-<p><img alt="" src="../../img/03/04/tuihua.jpg" /></p>
-<p>首先来解释一下第一个问题，第一个问题提到的「准确率迅速下降」并非图中某条准确率曲线的突然下降。而是说单独的网络层数与准确率的关系，就类似于下图。</p>
-<p><img alt="" src="../../img/03/04/tuihua1.png" /></p>
-<p>这张图是我随便做的层数-准确率的关系图，数据并不精准，只是形象的表述作者的意思。横轴为层数，纵轴为准确率。关键是作者说这种下降并非过拟合引起的。</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>过拟合，是指网络参数太多的情况下，拟合能力太强导致的训练准确率提升，测试准确率降低的情况。</p>
-</div>
-<p>再来说一下第二个问题，增加网络层数反而训练loss降低。这是挺奇怪的问题，因为56层的拟合能力必然比20层高，如果20层的网络存在最优拟合选项，
-那56层网络必然能够训练出相同的拟合效果，为何准确率反而降低了？即使以最极端的情况，添加的层是恒等映射，其他层是从学习到的较浅模型的拷贝。
-但为什么实验不符合预期呢？说明网络很难使用多个非线性层来近似恒等映射。</p>
-<h2 id="_2">残差连接</h2>
-<p>那我们就自己设计一个连接学习恒等映射。所以作者通过引入深度残差学习框架解决了退化问题。 如下图所示,原来我们希望这个网络块学习直接的映射关系H(x),
-现在我们让他学习H(x)和输入x之间的残差F(x)。</p>
-<p><img alt="" src="../../img/03/04/resblock.jpg" /></p>
-<p>其中</p>
-<p>
-<script type="math/tex; mode=display"> H(x) = F(x) + x </script>
-</p>
-<p>作者认为这样让网络学习残差映射比原始的、未参考的映射更容易优化。在极端情况下，如果一个恒等映射是最优的，那么将残差置为零比通过一堆非线性层来拟合恒等映射更容易。</p>
-<p>将x直接连接到输出的设计被称为 快捷连接（shortcut connection），他可以跨过一层或多层网络简单地执行恒等映射。在实现上既不增加额外的参数也不增加计算复杂度。</p>
-<p>发现通过实验可以发现：1）我们极深的残差网络易于优化，但当深度增加时，对应的“简单”网络（简单堆叠层）表现出更高的训练误差；
-2）我们的深度残差网络可以从大大增加的深度中轻松获得准确性收益，生成的结果实质上比以前的网络更好。</p>
-<p>也就是说训练时候收敛效果更好了，也更快了。测试时候更深的网络性能更好了。</p>
-<h2 id="_3">网络结构</h2>
-<p>首先作者设计了如下两个网络中使用的模块</p>
-<p><img alt="" src="../../img/03/04/resblock2.jpg" /></p>
-<p>其中左侧是ResNet-34的构建块，右侧是ResNet-50/101/152的构建块，称作&rdquo;bottleneck&rdquo;。虽然本文包含了两层或者三层，但更多的层也是可以的。不过作者说如果只有一层没有优势。</p>
-<p>bottleneck结构就是前面先用1 x 1卷积降维，后面再用1 x 1卷积升维以符合维度大小，这样做可以大大减少计算量。注意bottleneck中3 x 3的卷积层只有一个</p>
-<p>通过上面的模块，便可以构建不同层数的网络，构建方式如下：</p>
-<p><img alt="" src="../../img/03/04/resnet.jpg" /></p>
-<p>其中表哥你第一列的ConvX区分不同阶段（stage），每个阶段之间使用步长为2的卷积来进行下采样。倒数第二层输出的feature map后面是全局平均池化，
-也就是每个feature map求平均值获得一维向量，因为ImageNet输出是1000个类别，所以再连接一层1000个神经元的全连接层，最后再接上一个Softmax。</p>
-<p>现在有个问题，ResNet50/101/152的的第一个stage的输入channel维度都是64，跨层连接之后维度并不匹配，所以这里不是恒等映射，还会加一个升维的操作。
-升维有两种方式：第一种是直接全补0，这样做优势是不会增加网络的参数；第二种是1 x 1卷积升维</p>
-<h2 id="_4">代码实现</h2>
-<p>基础网络实现如下</p>
-<pre><code class="language-python">class BasicBlock(nn.Module):
-    &quot;&quot;&quot;Basic Block for resnet 18 and resnet 34
-
-    &quot;&quot;&quot;
-
-    #BasicBlock and BottleNeck block
-    #have different output size
-    #we use class attribute expansion
-    #to distinct
-    expansion = 1
-
-    def __init__(self, in_channels, out_channels, stride=1):
-        super().__init__()
-
-        #residual function
-        self.residual_function = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels * BasicBlock.expansion)
-        )
-
-        #shortcut
-        self.shortcut = nn.Sequential()
-
-        #the shortcut output dimension is not the same with residual function
-        #use 1*1 convolution to match the dimension
-        if stride != 1 or in_channels != BasicBlock.expansion * out_channels:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_channels * BasicBlock.expansion)
-            )
-
-    def forward(self, x):
-        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
+<h1 id="minist">Minist基础实现</h1>
+<p>回想一下实现异或操作的神经网络，现在我们希望让网络能实现的工程更加复杂一些，比如识别一个数字。</p>
+<p>首先，我们展示了一些minist数据。</p>
+<p><img alt="" src="../../img/02/01/minist.jpg" /></p>
+<p>通过你聪明的大脑你肯定瞬间能认出这些数字，但是如果是计算机呢？如何让他们从存储时候的二进制，经过网络推理得到数字结果。
+根据我们之前的工作，我们可以将图像转成一维输入，然后利用多层神经元训练学习，得到最终的10个输出，分别代表0-9的预测结果。
+接下来我们就要通过这种思路实现。</p>
+<h2 id="_1">初始化网络</h2>
+<p>我们定义一个Network类⽤来初始化⼀个Network对象：</p>
+<pre><code class="language-python">class Network(object):
+    def __init__(self, sizes):
+        self.num_layers = len(sizes)
+        self.sizes = sizes
+        self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
+        self.weights = [np.random.randn(y, x)
+        for x, y in zip(sizes[:-1], sizes[1:])]
 </code></pre>
-<p>BottleNeck实现如下</p>
-<pre><code class="language-python">class BottleNeck(nn.Module):
-    &quot;&quot;&quot;Residual block for resnet over 50 layers
-
-    &quot;&quot;&quot;
-    expansion = 4
-    def __init__(self, in_channels, out_channels, stride=1):
-        super().__init__()
-        self.residual_function = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, stride=stride, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels * BottleNeck.expansion, kernel_size=1, bias=False),
-            nn.BatchNorm2d(out_channels * BottleNeck.expansion),
-        )
-
-        self.shortcut = nn.Sequential()
-
-        if stride != 1 or in_channels != out_channels * BottleNeck.expansion:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels * BottleNeck.expansion, stride=stride, kernel_size=1, bias=False),
-                nn.BatchNorm2d(out_channels * BottleNeck.expansion)
-            )
-
-    def forward(self, x):
-        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
+<p>通过</p>
+<pre><code class="language-python">net = Network([2, 3, 1])
 </code></pre>
-<p>网络实现如下</p>
-<pre><code class="language-python">class ResNet(nn.Module):
-
-    def __init__(self, block, num_block, num_classes=100):
-        super().__init__()
-
-        self.in_channels = 64
-
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True))
-        #we use a different inputsize than the original paper
-        #so conv2_x's stride is 1
-        self.conv2_x = self._make_layer(block, 64, num_block[0], 1)
-        self.conv3_x = self._make_layer(block, 128, num_block[1], 2)
-        self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
-        self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
-        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
-
-    def _make_layer(self, block, out_channels, num_blocks, stride):
-        &quot;&quot;&quot;make resnet layers(by layer i didnt mean this 'layer' was the
-        same as a neuron netowork layer, ex. conv layer), one layer may
-        contain more than one residual block
-
-        Args:
-            block: block type, basic block or bottle neck block
-            out_channels: output depth channel number of this layer
-            num_blocks: how many blocks per layer
-            stride: the stride of the first block of this layer
-        Return:
-            return a resnet layer
-        &quot;&quot;&quot;
-
-        # we have num_block blocks per layer, the first block
-        # could be 1 or 2, other blocks would always be 1
-        strides = [stride] + [1] * (num_blocks - 1)
-        layers = []
-        for stride in strides:
-            layers.append(block(self.in_channels, out_channels, stride))
-            self.in_channels = out_channels * block.expansion
-
-        return nn.Sequential(*layers)
-
-    def forward(self, x):
-        output = self.conv1(x)
-        output = self.conv2_x(output)
-        output = self.conv3_x(output)
-        output = self.conv4_x(output)
-        output = self.conv5_x(output)
-        output = self.avg_pool(output)
-        output = output.view(output.size(0), -1)
-        output = self.fc(output)
-
-        return output
-
-
-def resnet18():
-    &quot;&quot;&quot; return a ResNet 18 object
-    &quot;&quot;&quot;
-    return ResNet(BasicBlock, [2, 2, 2, 2])
-
-def resnet34():
-    &quot;&quot;&quot; return a ResNet 34 object
-    &quot;&quot;&quot;
-    return ResNet(BasicBlock, [3, 4, 6, 3])
-
-def resnet50():
-    &quot;&quot;&quot; return a ResNet 50 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 4, 6, 3])
-
-def resnet101():
-    &quot;&quot;&quot; return a ResNet 101 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 4, 23, 3])
-
-def resnet152():
-    &quot;&quot;&quot; return a ResNet 152 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 8, 36, 3])
+<p>便可以实例化一个第⼀层有 2 个神经元，第⼆层有 3 个神经元，最后层有 1 个神经元的 Network 对象。
+你可以发现修改初始化时候的list就可以修改网络的层数和每层的神经元数量，这不再用对每一层进行定义。
+而np.random.randn 函数本身就是用来⽣成均值为 0，标准差为 1 的⾼斯分布，可以当作参数的初始化。</p>
+<h2 id="_2">前向传播</h2>
+<p>我们可以通过一个for循环获得前向输入。</p>
+<pre><code class="language-python">def feedforward(self, a):
+    &quot;&quot;&quot;Return the output of the network if &quot;a&quot; is input.&quot;&quot;&quot;
+    for b, w in zip(self.biases, self.weights):
+    a = sigmoid(np.dot(w, a)+b)
+return a
 </code></pre>
-<p>通过这个代码我们也可以看到使用相同块堆叠设计网络的简易之处，可以很方便的提升网络层数。且代码非常简洁。</p>
-<h2 id="_5">讨论</h2>
-<p>这部分并非掌握的地方，如果暂时不了解没有关系，可以等之后再来看看。</p>
-<p>残差结构为什么有效？</p>
-<ul>
-<li>自适应深度：网络退化问题就体现了多层网络难以拟合恒等映射这种情况，也就是说H(x)难以拟合x，
-但使用了残差结构之后，拟合恒等映射变得很容易，直接把网络参数全学习到为0，只留下那个恒等映射的跨层连接即可。
-于是当网络不需要这么深时，中间的恒等映射就可以多一点，反之就可以少一点。</li>
-<li>“差分放大器”：假设最优H(x)更接近恒等映射，那么网络更容易发现除恒等映射之外微小的波动</li>
-<li>模型集成：整个ResNet类似于多个网络的集成，原因是删除ResNet的部分网络结点不影响整个网络的性能，但VGGNet会崩溃，</li>
-<li>缓解梯度消失：针对一个残差结构对输入 x 求导就可以知道，由于跨层连接的存在，总梯度在F(x)对x的导数基础上还会加1</li>
-</ul>
+<h2 id="_3">随机梯度下降</h2>
+<p>现在我们要定义一个随机梯度下降算法让网络学习，</p>
+<pre><code class="language-python">def SGD(self, training_data, epochs, mini_batch_size, eta, test_data=None):
+    &quot;&quot;&quot;Train the neural network using mini-batch stochastic
+    gradient descent. The &quot;training_data&quot; is a list of tuples
+    &quot;(x, y)&quot; representing the training inputs and the desired
+    outputs. The other non-optional parameters are
+    self-explanatory. If &quot;test_data&quot; is provided then the
+    network will be evaluated against the test data after each
+    epoch, and partial progress printed out. This is useful for
+    tracking progress, but slows things down substantially.&quot;&quot;&quot;
+    if test_data: n_test = len(test_data)
+    n = len(training_data)
+    for j in xrange(epochs):
+        random.shuffle(training_data)
+        mini_batches = [
+            training_data[k:k+mini_batch_size]
+            for k in xrange(0, n, mini_batch_size)]
+        for mini_batch in mini_batches:
+            self.update_mini_batch(mini_batch, eta)
+        if test_data:
+            print &quot;Epoch {0}: {1} / {2}&quot;.format(
+            j, self.evaluate(test_data), n_test)
+        else:
+            print &quot;Epoch {0} complete&quot;.format(j)
+</code></pre>
+<p>training_data 是⼀个 (x, y) 元组的列表，表⽰训练输⼊和其对应的期望输出。变量 epochs 和
+mini_batch_size 正如你预料的 —— 迭代期数量，和采样时的⼩批量数据的⼤⼩。eta 是学习速率，
+η。如果给出了可选参数 test_data，那么程序会在每个训练器后评估⽹络，并打印出部分进展。</p>
+<h2 id="_4">更新参数</h2>
+<p>在每个迭代期，它⾸先随机地将训练数据打乱，然后将它分成多个适当⼤
+⼩的⼩批量数据。这是⼀个简单的从训练数据的随机采样⽅法。然后对于每⼀个 mini_batch
+我们应⽤⼀次梯度下降。这是通过代码 self.update_mini_batch(mini_batch, eta) 完成的，它仅
+仅使⽤ mini_batch 中的训练数据，根据单次梯度下降的迭代更新⽹络的权重和偏置。</p>
+<pre><code class="language-python">    def update_mini_batch(self, mini_batch, eta):
+        &quot;&quot;&quot;Update the network's weights and biases by applying
+        gradient descent using backpropagation to a single mini batch.
+        The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
+        is the learning rate.&quot;&quot;&quot;
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        for x, y in mini_batch:
+            delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+        self.weights = [w-(eta/len(mini_batch))*nw
+                        for w, nw in zip(self.weights, nabla_w)]
+        self.biases = [b-(eta/len(mini_batch))*nb
+                       for b, nb in zip(self.biases, nabla_b)]
+</code></pre>
+<p>⼤部分⼯作由这⾏代码完成：</p>
+<pre><code class="language-python">delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+</code></pre>
+<p>这⾏调⽤了⼀个称为反向传播的算法，⼀种快速计算代价函数的梯度的⽅法。因此
+update_mini_batch 的⼯作仅仅是对 mini_batch 中的每⼀个训练样本计算梯度，然后适当地更
+新 self.weights 和 self.biases。</p>
+<p>该代码的实现如下</p>
+<pre><code class="language-python">    def backprop(self, x, y):
+        &quot;&quot;&quot;Return a tuple ``(nabla_b, nabla_w)`` representing the
+        gradient for the cost function C_x.  ``nabla_b`` and
+        ``nabla_w`` are layer-by-layer lists of numpy arrays, similar
+        to ``self.biases`` and ``self.weights``.&quot;&quot;&quot;
+        nabla_b = [np.zeros(b.shape) for b in self.biases]
+        nabla_w = [np.zeros(w.shape) for w in self.weights]
+        # feedforward
+        activation = x
+        activations = [x] # list to store all the activations, layer by layer
+        zs = [] # list to store all the z vectors, layer by layer
+        for b, w in zip(self.biases, self.weights):
+            z = np.dot(w, activation)+b
+            zs.append(z)
+            activation = sigmoid(z)
+            activations.append(activation)
+        # backward pass
+        delta = self.cost_derivative(activations[-1], y) * \
+            sigmoid_prime(zs[-1])
+        nabla_b[-1] = delta
+        nabla_w[-1] = np.dot(delta, activations[-2].transpose())
+        # Note that the variable l in the loop below is used a little
+        # differently to the notation in Chapter 2 of the book.  Here,
+        # l = 1 means the last layer of neurons, l = 2 is the
+        # second-last layer, and so on.  It's a renumbering of the
+        # scheme in the book, used here to take advantage of the fact
+        # that Python can use negative indices in lists.
+        for l in xrange(2, self.num_layers):
+            z = zs[-l]
+            sp = sigmoid_prime(z)
+            delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
+            nabla_b[-l] = delta
+            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
+        return (nabla_b, nabla_w)
+</code></pre>
+<p>这里我们还需要定义sigmoid_prime，他是sigmoid的导数。</p>
+<pre><code class="language-python">def sigmoid_prime(z):
+    &quot;&quot;&quot;Derivative of the sigmoid function.&quot;&quot;&quot;
+    return sigmoid(z)*(1-sigmoid(z))
+</code></pre>
+<h2 id="_5">数据加载</h2>
+<pre><code class="language-python">
+def load_data():
+    &quot;&quot;&quot;Return the MNIST data as a tuple containing the training data,
+    the validation data, and the test data.
+
+    The ``training_data`` is returned as a tuple with two entries.
+    The first entry contains the actual training images.  This is a
+    numpy ndarray with 50,000 entries.  Each entry is, in turn, a
+    numpy ndarray with 784 values, representing the 28 * 28 = 784
+    pixels in a single MNIST image.
+
+    The second entry in the ``training_data`` tuple is a numpy ndarray
+    containing 50,000 entries.  Those entries are just the digit
+    values (0...9) for the corresponding images contained in the first
+    entry of the tuple.
+
+    The ``validation_data`` and ``test_data`` are similar, except
+    each contains only 10,000 images.
+
+    This is a nice data format, but for use in neural networks it's
+    helpful to modify the format of the ``training_data`` a little.
+    That's done in the wrapper function ``load_data_wrapper()``, see
+    below.
+    &quot;&quot;&quot;
+    f = gzip.open('../data/mnist.pkl.gz', 'rb')
+    training_data, validation_data, test_data = cPickle.load(f)
+    f.close()
+    return (training_data, validation_data, test_data)
+
+
+def load_data_wrapper():
+    &quot;&quot;&quot;Return a tuple containing ``(training_data, validation_data,
+    test_data)``. Based on ``load_data``, but the format is more
+    convenient for use in our implementation of neural networks.
+
+    In particular, ``training_data`` is a list containing 50,000
+    2-tuples ``(x, y)``.  ``x`` is a 784-dimensional numpy.ndarray
+    containing the input image.  ``y`` is a 10-dimensional
+    numpy.ndarray representing the unit vector corresponding to the
+    correct digit for ``x``.
+
+    ``validation_data`` and ``test_data`` are lists containing 10,000
+    2-tuples ``(x, y)``.  In each case, ``x`` is a 784-dimensional
+    numpy.ndarry containing the input image, and ``y`` is the
+    corresponding classification, i.e., the digit values (integers)
+    corresponding to ``x``.
+
+    Obviously, this means we're using slightly different formats for
+    the training data and the validation / test data.  These formats
+    turn out to be the most convenient for use in our neural network
+    code.&quot;&quot;&quot;
+    tr_d, va_d, te_d = load_data()
+    training_inputs = [np.reshape(x, (784, 1)) for x in tr_d[0]]
+    training_results = [vectorized_result(y) for y in tr_d[1]]
+    training_data = zip(training_inputs, training_results)
+    validation_inputs = [np.reshape(x, (784, 1)) for x in va_d[0]]
+    validation_data = zip(validation_inputs, va_d[1])
+    test_inputs = [np.reshape(x, (784, 1)) for x in te_d[0]]
+    test_data = zip(test_inputs, te_d[1])
+    return (training_data, validation_data, test_data)
+
+
+def vectorized_result(j):
+    &quot;&quot;&quot;Return a 10-dimensional unit vector with a 1.0 in the jth
+    position and zeroes elsewhere.  This is used to convert a digit
+    (0...9) into a corresponding desired output from the neural
+    network.&quot;&quot;&quot;
+    e = np.zeros((10, 1))
+    e[j] = 1.0
+    return e
+</code></pre>
+<h2 id="_6">开始训练</h2>
+<p>定义主函数运行代码,使⽤随机梯度下降来从 MNIST training_data 学习超过 30 次迭代期，⼩批量数
+据⼤⼩为 10，学习速率 η = 3.0，</p>
+<pre><code class="language-python">if __name__==&quot;__main__&quot;:
+    net = network.Network([784, 30, 10]) 
+
+    net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
+
+</code></pre>
+<p>经过训练可以得到以下的输出</p>
+<pre><code class="language-python">Epoch 28: 9542 / 10000
+Epoch 29: 9534 / 10000
+</code></pre>
+<p>说明我们的结果达到了95%。</p>
 
 <div id="disqus_thread"></div>
 <script>

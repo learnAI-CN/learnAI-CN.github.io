@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="http://learnopengl.com 系列教程的简体中文翻译">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/03%20Model%20Loading/04%20ResNet/">
+        <link rel="canonical" href="https://learnopengl-cn.github.io/02%20HardWayToDeep/overfitting/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>ResNet - LearnOpenGL CN</title>
+	<title>过拟合/欠拟合 - LearnOpenGL CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -139,19 +139,19 @@
         
             
 <li >
-    <a href="../../02%20HardWayToDeep/1Channel%20minist/">minist实现</a>
+    <a href="../1Channel%20minist/">minist实现</a>
 </li>
 
         
             
 <li >
-    <a href="../../02%20HardWayToDeep/07%20Gradient%20vanishing/">梯度消失/爆炸</a>
+    <a href="../07%20Gradient%20vanishing/">梯度消失/爆炸</a>
 </li>
 
         
             
-<li >
-    <a href="../../02%20HardWayToDeep/overfitting/">过拟合/欠拟合</a>
+<li class="active">
+    <a href="./">过拟合/欠拟合</a>
 </li>
 
         
@@ -229,31 +229,31 @@
         
             
 <li >
-    <a href="../01%20Assimp/">AlexNet</a>
+    <a href="../../03%20Model%20Loading/01%20Assimp/">AlexNet</a>
 </li>
 
         
             
 <li >
-    <a href="../02%20Mesh/">VGG</a>
+    <a href="../../03%20Model%20Loading/02%20Mesh/">VGG</a>
 </li>
 
         
             
 <li >
-    <a href="../03%20Model/">GoogLeNet</a>
-</li>
-
-        
-            
-<li class="active">
-    <a href="./">ResNet</a>
+    <a href="../../03%20Model%20Loading/03%20Model/">GoogLeNet</a>
 </li>
 
         
             
 <li >
-    <a href="../05%20DenseNet/">DenseNet</a>
+    <a href="../../03%20Model%20Loading/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/05%20DenseNet/">DenseNet</a>
 </li>
 
         
@@ -644,12 +644,12 @@
                     </a>
                 </li>
                 <li >
-                    <a rel="next" href="../03%20Model/">
+                    <a rel="next" href="../07%20Gradient%20vanishing/">
                         <i class="fa fa-arrow-left"></i> 上一节
                     </a>
                 </li>
                 <li >
-                    <a rel="prev" href="../05%20DenseNet/">
+                    <a rel="prev" href="../../02%20Lighting/01%20Colors/">
                         下一节 <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
@@ -678,241 +678,76 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#resnet">ResNet</a></li>
+        <li class="main active"><a href="#_1">过拟合/欠拟合</a></li>
         
-            <li><a href="#resnet_1">ResNet特点</a></li>
+            <li><a href="#_2">欠拟合效果展示</a></li>
         
-            <li><a href="#resnet_2">ResNet引入</a></li>
+            <li><a href="#_3">欠拟合产生原因</a></li>
         
-            <li><a href="#_1">退化问题</a></li>
+            <li><a href="#_4">欠拟合解决方法</a></li>
         
-            <li><a href="#_2">残差连接</a></li>
+            <li><a href="#_5">过拟合效果展示</a></li>
         
-            <li><a href="#_3">网络结构</a></li>
+            <li><a href="#_6">过拟合产生原因</a></li>
         
-            <li><a href="#_4">代码实现</a></li>
+            <li><a href="#_7">过拟合解决方法</a></li>
         
-            <li><a href="#_5">讨论</a></li>
+            <li><a href="#_8">参考</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="resnet">ResNet</h1>
-<p>ResNet（Residual Network）是由微软亚洲研究院的何凯明等人于2015年提出的一种深度卷积神经网络模型，是目前最为流行和广泛应用的卷积神经网络之一。
-ResNet的主要贡献在于提出了残差学习的思路，可以解决深度卷积神经网络中的梯度消失和模型退化等问题，从而实现了更深的网络结构和更好的性能表现。</p>
-<h2 id="resnet_1">ResNet特点</h2>
-<ul>
-<li>提出残差学习</li>
-</ul>
-<h2 id="resnet_2">ResNet引入</h2>
-<p>终于来到了大名鼎鼎的ResNet，这是一篇无论是什么时候去读都不嫌晚，读多少遍都不觉多的经典论文。我希望能尽可能详细的向您讲解该论文。</p>
-<p>在之前的网络设计中可以发现网络的深度至关重要。深度网络自然地将低/中/高级特征和分类器以端到端多层方式进行集成，特征的“级别”可以通过堆叠层的数量（深度）来丰富。
-如此来说提升网络的性能的唯一障碍就是训练时会遇到的梯度消失/爆炸问题。而这个问题通过标准初始化和BN在很大程度上已经解决，这使得数十层的网络能通过具有反向传播的随机梯度下降（SGD）开始收敛。
-网络设计岂不是至此可以高枕无忧了，只需要增加网络层数就可以。但本文发现当网络层数上升时，性能并没有增加。</p>
-<h2 id="_1">退化问题</h2>
-<p>作者在实验中发现了两个现象。1）随着网络深度的增加，准确率达到饱和然后迅速下降。但这种下降不是由过拟合引起的。
-2）在适当的深度模型上添加更多的层会导致更高的训练误差。这两个现象被称为退化问题，实验过程可以如下图表示</p>
-<p><img alt="" src="../../img/03/04/tuihua.jpg" /></p>
-<p>首先来解释一下第一个问题，第一个问题提到的「准确率迅速下降」并非图中某条准确率曲线的突然下降。而是说单独的网络层数与准确率的关系，就类似于下图。</p>
-<p><img alt="" src="../../img/03/04/tuihua1.png" /></p>
-<p>这张图是我随便做的层数-准确率的关系图，数据并不精准，只是形象的表述作者的意思。横轴为层数，纵轴为准确率。关键是作者说这种下降并非过拟合引起的。</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>过拟合，是指网络参数太多的情况下，拟合能力太强导致的训练准确率提升，测试准确率降低的情况。</p>
-</div>
-<p>再来说一下第二个问题，增加网络层数反而训练loss降低。这是挺奇怪的问题，因为56层的拟合能力必然比20层高，如果20层的网络存在最优拟合选项，
-那56层网络必然能够训练出相同的拟合效果，为何准确率反而降低了？即使以最极端的情况，添加的层是恒等映射，其他层是从学习到的较浅模型的拷贝。
-但为什么实验不符合预期呢？说明网络很难使用多个非线性层来近似恒等映射。</p>
-<h2 id="_2">残差连接</h2>
-<p>那我们就自己设计一个连接学习恒等映射。所以作者通过引入深度残差学习框架解决了退化问题。 如下图所示,原来我们希望这个网络块学习直接的映射关系H(x),
-现在我们让他学习H(x)和输入x之间的残差F(x)。</p>
-<p><img alt="" src="../../img/03/04/resblock.jpg" /></p>
-<p>其中</p>
-<p>
-<script type="math/tex; mode=display"> H(x) = F(x) + x </script>
-</p>
-<p>作者认为这样让网络学习残差映射比原始的、未参考的映射更容易优化。在极端情况下，如果一个恒等映射是最优的，那么将残差置为零比通过一堆非线性层来拟合恒等映射更容易。</p>
-<p>将x直接连接到输出的设计被称为 快捷连接（shortcut connection），他可以跨过一层或多层网络简单地执行恒等映射。在实现上既不增加额外的参数也不增加计算复杂度。</p>
-<p>发现通过实验可以发现：1）我们极深的残差网络易于优化，但当深度增加时，对应的“简单”网络（简单堆叠层）表现出更高的训练误差；
-2）我们的深度残差网络可以从大大增加的深度中轻松获得准确性收益，生成的结果实质上比以前的网络更好。</p>
-<p>也就是说训练时候收敛效果更好了，也更快了。测试时候更深的网络性能更好了。</p>
-<h2 id="_3">网络结构</h2>
-<p>首先作者设计了如下两个网络中使用的模块</p>
-<p><img alt="" src="../../img/03/04/resblock2.jpg" /></p>
-<p>其中左侧是ResNet-34的构建块，右侧是ResNet-50/101/152的构建块，称作&rdquo;bottleneck&rdquo;。虽然本文包含了两层或者三层，但更多的层也是可以的。不过作者说如果只有一层没有优势。</p>
-<p>bottleneck结构就是前面先用1 x 1卷积降维，后面再用1 x 1卷积升维以符合维度大小，这样做可以大大减少计算量。注意bottleneck中3 x 3的卷积层只有一个</p>
-<p>通过上面的模块，便可以构建不同层数的网络，构建方式如下：</p>
-<p><img alt="" src="../../img/03/04/resnet.jpg" /></p>
-<p>其中表哥你第一列的ConvX区分不同阶段（stage），每个阶段之间使用步长为2的卷积来进行下采样。倒数第二层输出的feature map后面是全局平均池化，
-也就是每个feature map求平均值获得一维向量，因为ImageNet输出是1000个类别，所以再连接一层1000个神经元的全连接层，最后再接上一个Softmax。</p>
-<p>现在有个问题，ResNet50/101/152的的第一个stage的输入channel维度都是64，跨层连接之后维度并不匹配，所以这里不是恒等映射，还会加一个升维的操作。
-升维有两种方式：第一种是直接全补0，这样做优势是不会增加网络的参数；第二种是1 x 1卷积升维</p>
-<h2 id="_4">代码实现</h2>
-<p>基础网络实现如下</p>
-<pre><code class="language-python">class BasicBlock(nn.Module):
-    &quot;&quot;&quot;Basic Block for resnet 18 and resnet 34
+<h1 id="_1">过拟合/欠拟合</h1>
+<p>导致泛化性差有两个很重要的原因，即过拟合和欠拟合。本节将详细介绍一下</p>
+<p>下图可以形象的展示欠拟合和过拟合的形式，欠拟合的问题在于拟合的公式太简单，无法描述大多数数据集的分布。
+过拟合反而过于追求每一个训练集的分布，导致拟合公式过于复杂，有点类似于死记硬背，没有理解数据背后的规律，泛化能力差。</p>
+<p><img alt="" src="../../img/01/09/Overfitting.png" /></p>
+<h2 id="_2">欠拟合效果展示</h2>
+<p>当我们使用上节的minist实现代码，定义网络参数为10的话，</p>
+<pre><code class="language-python">if __name__==&quot;__main__&quot;:
+    net = network.Network([784, 10, 10]) 
 
-    &quot;&quot;&quot;
+    net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
 
-    #BasicBlock and BottleNeck block
-    #have different output size
-    #we use class attribute expansion
-    #to distinct
-    expansion = 1
-
-    def __init__(self, in_channels, out_channels, stride=1):
-        super().__init__()
-
-        #residual function
-        self.residual_function = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels * BasicBlock.expansion, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels * BasicBlock.expansion)
-        )
-
-        #shortcut
-        self.shortcut = nn.Sequential()
-
-        #the shortcut output dimension is not the same with residual function
-        #use 1*1 convolution to match the dimension
-        if stride != 1 or in_channels != BasicBlock.expansion * out_channels:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels * BasicBlock.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_channels * BasicBlock.expansion)
-            )
-
-    def forward(self, x):
-        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
 </code></pre>
-<p>BottleNeck实现如下</p>
-<pre><code class="language-python">class BottleNeck(nn.Module):
-    &quot;&quot;&quot;Residual block for resnet over 50 layers
+<p>结果只能达到80%，很明显这比30个隐藏神经元的效果差，这种模型在训练集上的表现较差，无法很好地拟合训练数据的真实分布的情况被称为欠拟合。</p>
+<p>当模型过于简单时，模型无法学习到训练数据中的复杂关系，导致模型无法很好地拟合数据。当训练数据过少时，模型的泛化能力也会受到限制，因为模型没有足够的数据来学习数据的真实分布。</p>
+<h2 id="_3">欠拟合产生原因</h2>
+<p>造成欠拟合的原因主要有：</p>
+<p>1、模型复杂度过低：当模型过于简单时，模型无法学习到训练数据中的复杂关系，导致模型无法很好地拟合数据。例如，在图像分类任务中，如果模型只有一层线性层，那么模型的表达能力就非常有限，无法很好地拟合数据。</p>
+<p>2、数据量过少：当训练数据量过少时，模型的泛化能力也会受到限制，因为模型没有足够的数据来学习数据的真实分布。例如，在图像分类任务中，如果只有很少的图像数据可用于训练，那么模型就很难学习到图像数据的复杂特征和关系。</p>
+<p>3、过度的正则化：当过度使用正则化技术（如L1正则化、L2正则化、Dropout等）时，模型可能会过于简单，从而导致欠拟合的问题。例如，在使用L1正则化时，如果正则化参数太大，那么模型可能会过于稀疏，无法学习到训练数据中的复杂特征和关系。</p>
+<p>4、特征不足：当特征提取不足时，模型无法很好地学习到数据中的关键特征，从而导致欠拟合的问题。例如，在图像分类任务中，如果只使用了图像的像素值作为输入特征，而没有对图像进行特征提取，那么模型就无法学习到图像中的更高级别的特征，从而导致欠拟合的问题。</p>
+<h2 id="_4">欠拟合解决方法</h2>
+<p>为了解决欠拟合问题，可以采用以下方法：</p>
+<p>增加模型复杂度：当模型过于简单时，可以通过增加模型复杂度来提高模型的拟合能力。例如可以通过增加模型的层数、增加每层的神经元数、使用更复杂的激活函数等方法来增加模型的复杂度。</p>
+<p>增加数据量：增加数据量是解决欠拟合问题的最有效方法之一。更多的数据可以帮助模型更好地学习数据的真实分布，从而提高模型的泛化能力。</p>
+<p>正则化：正则化技术可以限制模型的复杂度，避免模型过度拟合训练数据。常用的正则化技术包括L1正则化、L2正则化、Dropout等。</p>
+<p>特征工程：特征工程是指对原始数据进行一些预处理和特征提取，从而提高模型的泛化能力。例如可以通过特征选择、特征变换、特征提取等方法来增加模型的拟合能力。</p>
+<h2 id="_5">过拟合效果展示</h2>
+<p>那是不是网络中间层数量变多效果就会提升呢，我们尝试将网络中间参数设为两层100看看训练结果。</p>
+<pre><code class="language-python">if __name__==&quot;__main__&quot;:
+    net = network.Network([784, 100,  100, 10]) 
 
-    &quot;&quot;&quot;
-    expansion = 4
-    def __init__(self, in_channels, out_channels, stride=1):
-        super().__init__()
-        self.residual_function = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels, stride=stride, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(out_channels),
-            nn.ReLU(inplace=True),
-            nn.Conv2d(out_channels, out_channels * BottleNeck.expansion, kernel_size=1, bias=False),
-            nn.BatchNorm2d(out_channels * BottleNeck.expansion),
-        )
-
-        self.shortcut = nn.Sequential()
-
-        if stride != 1 or in_channels != out_channels * BottleNeck.expansion:
-            self.shortcut = nn.Sequential(
-                nn.Conv2d(in_channels, out_channels * BottleNeck.expansion, stride=stride, kernel_size=1, bias=False),
-                nn.BatchNorm2d(out_channels * BottleNeck.expansion)
-            )
-
-    def forward(self, x):
-        return nn.ReLU(inplace=True)(self.residual_function(x) + self.shortcut(x))
+    net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
 </code></pre>
-<p>网络实现如下</p>
-<pre><code class="language-python">class ResNet(nn.Module):
-
-    def __init__(self, block, num_block, num_classes=100):
-        super().__init__()
-
-        self.in_channels = 64
-
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
-            nn.BatchNorm2d(64),
-            nn.ReLU(inplace=True))
-        #we use a different inputsize than the original paper
-        #so conv2_x's stride is 1
-        self.conv2_x = self._make_layer(block, 64, num_block[0], 1)
-        self.conv3_x = self._make_layer(block, 128, num_block[1], 2)
-        self.conv4_x = self._make_layer(block, 256, num_block[2], 2)
-        self.conv5_x = self._make_layer(block, 512, num_block[3], 2)
-        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
-
-    def _make_layer(self, block, out_channels, num_blocks, stride):
-        &quot;&quot;&quot;make resnet layers(by layer i didnt mean this 'layer' was the
-        same as a neuron netowork layer, ex. conv layer), one layer may
-        contain more than one residual block
-
-        Args:
-            block: block type, basic block or bottle neck block
-            out_channels: output depth channel number of this layer
-            num_blocks: how many blocks per layer
-            stride: the stride of the first block of this layer
-        Return:
-            return a resnet layer
-        &quot;&quot;&quot;
-
-        # we have num_block blocks per layer, the first block
-        # could be 1 or 2, other blocks would always be 1
-        strides = [stride] + [1] * (num_blocks - 1)
-        layers = []
-        for stride in strides:
-            layers.append(block(self.in_channels, out_channels, stride))
-            self.in_channels = out_channels * block.expansion
-
-        return nn.Sequential(*layers)
-
-    def forward(self, x):
-        output = self.conv1(x)
-        output = self.conv2_x(output)
-        output = self.conv3_x(output)
-        output = self.conv4_x(output)
-        output = self.conv5_x(output)
-        output = self.avg_pool(output)
-        output = output.view(output.size(0), -1)
-        output = self.fc(output)
-
-        return output
-
-
-def resnet18():
-    &quot;&quot;&quot; return a ResNet 18 object
-    &quot;&quot;&quot;
-    return ResNet(BasicBlock, [2, 2, 2, 2])
-
-def resnet34():
-    &quot;&quot;&quot; return a ResNet 34 object
-    &quot;&quot;&quot;
-    return ResNet(BasicBlock, [3, 4, 6, 3])
-
-def resnet50():
-    &quot;&quot;&quot; return a ResNet 50 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 4, 6, 3])
-
-def resnet101():
-    &quot;&quot;&quot; return a ResNet 101 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 4, 23, 3])
-
-def resnet152():
-    &quot;&quot;&quot; return a ResNet 152 object
-    &quot;&quot;&quot;
-    return ResNet(BottleNeck, [3, 8, 36, 3])
-</code></pre>
-<p>通过这个代码我们也可以看到使用相同块堆叠设计网络的简易之处，可以很方便的提升网络层数。且代码非常简洁。</p>
-<h2 id="_5">讨论</h2>
-<p>这部分并非掌握的地方，如果暂时不了解没有关系，可以等之后再来看看。</p>
-<p>残差结构为什么有效？</p>
-<ul>
-<li>自适应深度：网络退化问题就体现了多层网络难以拟合恒等映射这种情况，也就是说H(x)难以拟合x，
-但使用了残差结构之后，拟合恒等映射变得很容易，直接把网络参数全学习到为0，只留下那个恒等映射的跨层连接即可。
-于是当网络不需要这么深时，中间的恒等映射就可以多一点，反之就可以少一点。</li>
-<li>“差分放大器”：假设最优H(x)更接近恒等映射，那么网络更容易发现除恒等映射之外微小的波动</li>
-<li>模型集成：整个ResNet类似于多个网络的集成，原因是删除ResNet的部分网络结点不影响整个网络的性能，但VGGNet会崩溃，</li>
-<li>缓解梯度消失：针对一个残差结构对输入 x 求导就可以知道，由于跨层连接的存在，总梯度在F(x)对x的导数基础上还会加1</li>
-</ul>
+<p>实验发现训练的精度提升了，但是测试精度反而下降了。
+这种现象被我们称为过拟合，是指模型在学习训练数据时过度拟合了训练数据的细节和噪声，导致模型对新数据的预测不准确。</p>
+<h2 id="_6">过拟合产生原因</h2>
+<p>造成过拟合的原因主要有：</p>
+<p>1、训练数据集样本单一，样本不足。如果训练样本只有负样本，然后那生成的模型去预测正样本，这肯定预测不准。所以训练样本要尽可能的全面，覆盖所有的数据类型。</p>
+<p>2、训练数据中噪声干扰过大。噪声指训练数据中的干扰数据。过多的干扰会导致记录了很多噪声特征，忽略了真实输入和输出之间的关系。</p>
+<p>3、模型过于复杂。模型太复杂，已经能够“死记硬背”记下了训练数据的信息，但是遇到没有见过的数据的时候不能够变通，泛化能力太差。我们希望模型对不同的模型都有稳定的输出。模型太复杂是过拟合的重要因素。</p>
+<h2 id="_7">过拟合解决方法</h2>
+<p>增加数据量：增加数据量是解决过拟合问题的最有效方法之一。更多的数据可以帮助模型更好地学习数据的真实分布，从而提高模型的泛化能力。</p>
+<p>简化模型：减少模型的复杂度可以减少模型对噪声和细节的拟合，从而提高模型的泛化能力。例如可以通过减少模型的层数、减少每层的神经元数、使用正则化等方法来简化模型。</p>
+<p>使用正则化技术：正则化技术可以限制模型的复杂度，防止模型过度拟合训练数据。常用的正则化技术包括L1正则化、L2正则化、Dropout等。</p>
+<p>交叉验证：交叉验证是一种评估模型泛化能力的方法，可以评估模型在不同数据集上的性能，从而避免过拟合的问题。</p>
+<p>提前终止：在训练过程中，可以通过监控模型在验证集上的性能，来判断模型是否已经过拟合。一旦模型在验证集上的性能开始下降，就可以提前终止训练，从而避免过拟合的问题。</p>
+<h2 id="_8">参考</h2>
+<p>https://github.com/mnielsen/neural-networks-and-deep-learning/blob/master/src/network.py</p>
 
 <div id="disqus_thread"></div>
 <script>
