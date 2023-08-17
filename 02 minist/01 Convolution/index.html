@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnopengl-cn.github.io/02%20minist/01%20Convolution/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>卷积层 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20OpenGL/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li class="active">
+    <a href="./">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20LeNet/">再次实现minist</a>
+</li>
+
+        
+            
+<li >
+    <a href="../08%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20Model%20Loading/07%20MobileNet/">MoblieNet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Advanced%20OpenGL/01%20Depth%20testing/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Advanced%20OpenGL/02%20Stencil%20testing/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Advanced%20OpenGL/03%20Blending/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Advanced%20OpenGL/04%20Face%20culling/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Advanced%20OpenGL/05%20Framebuffers/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Advanced%20Lighting/01%20Advanced%20Lighting/">高级光照</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Advanced%20Lighting/02%20Gamma%20Correction/">Gamma校正</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/02%20Text%20Rendering/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20PBR/01%20Theory/">理论</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07 PBR/02 minist.md">光照</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">IBL</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20PBR/03%20IBL/01%20Diffuse%20irradiance/">漫反射辐照</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07%20PBR/03%20IBL/02%20Specular%20IBL/">镜面IBL</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/01%20Debugging/">调试</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20In%20Practice/02%20Text%20Rendering/">文本渲染</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">2D游戏</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/01 Breakout.md">Breakout</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/02 Setting up.md">准备工作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/03 Rendering Sprites.md">渲染精灵</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/04 Levels.md">关卡</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">碰撞</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/05 Collisions/01 Ball.md">球</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/05 Collisions/02 Collision detection.md">碰撞检测</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/05 Collisions/03 Collision resolution.md">碰撞处理</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/06 Particles.md">粒子</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/07 Postprocessing.md">后期处理</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/08 Powerups.md">道具</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/09 Audio.md">音效</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/10 Render Text.md">渲染文本</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06 In Practice/2D-Game/11 Final thoughts.md">结语</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">2020</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Guest%20Articles/2020/01%20Skeletal%20Animation/">骨骼动画</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">2022</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Guest%20Articles/2022/03%20Area%20Lights/">区域光</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../../02%20HardWayToDeep/05%20regulization/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../02%20Pooling/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/LearnOpenGL-CN/LearnOpenGL-CN">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://www.paypal.me/learnopengl/">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        支持原作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#_1">卷积层</a></li>
+        
+            <li><a href="#_2">二维卷积</a></li>
+        
+            <li><a href="#_3">步长</a></li>
+        
+            <li><a href="#padding">padding</a></li>
+        
+            <li><a href="#_4">共享权重和偏置</a></li>
+        
+            <li><a href="#_5">多输入</a></li>
+        
+            <li><a href="#_6">多输出</a></li>
+        
+            <li><a href="#pytorch">pytorch框架下卷积</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="_1">卷积层</h1>
+<p>在第一章中我们已经可以编写了一个可以自主训练学习的网络用于实现异或功能。在本章我们将深入深度学习实现字符识别任务
+同时为了提升网络学习效率，我们会在恰当的时候对之前的内容进行深入讲解</p>
+<p>回想一下实现异或操作的神经网络，我们将输入表示为一维向量。但从这章开始，我们希望能够处理图像数据，如下图我们展示了一些minist数据。</p>
+<p><img alt="" src="../../img/02/01/minist.jpg" /></p>
+<h2 id="_2">二维卷积</h2>
+<p>通过你聪明的大脑你肯定瞬间能认出这些数字，但是如果是计算机呢？如何让他们从存储时候的二进制，经过网络推理得到数字结果。
+根据我们之前的工作，我们可以将图像转成一维输入，然后利用多层神经元训练学习，得到最终的10个输出，分别代表0-9的预测结果。
+但这样就破坏了图像空间结构，训练质量肯定会大打折扣。因此我们在这里引入用于图像的二维卷积。</p>
+<p>如下图所示，是一个简单的卷积层</p>
+<p><img alt="" src="../../img/02/01/conv1.jpg" /></p>
+<p>首先我们先介绍一下<def>卷积核（Kernel）</def>。即上图中间的部分，可以看到他是一个2*2的二维矩阵。你可以把每一个小方框当作一个神经元
+方框中的值就是当前这个神经元的权重。</p>
+<p>和通常⼀样，我们把输⼊像素连接到⼀个隐藏神经元层。但是我们不会把每个输⼊像素连接到每个隐藏神经元。相反，我们只是把输⼊图像进⾏⼩的，局部区域的连接。
+具体来说，这个小的局部的区域就被称为<def>局部感受野</def>。他的维度和卷积核的维度相同。</p>
+<p>在计算每个输出时，实现方式如图中淡蓝色的部分，将局部感受野与卷积核进行对应位置的元素乘再求和。这样就得到输出最左上角的值。</p>
+<p>之后需要将局部感受野进行平行和垂直移动一格，每次移动都与卷积核计算得到输出。如横向平移一个的操作如下</p>
+<p><img alt="" src="../../img/02/01/conv2.jpg" /></p>
+<p>如此循环，得到最终的输出</p>
+<p><img alt="" src="../../img/02/01/conv3.jpg" /></p>
+<p>这样我们便完成了一个卷积核对输入的卷积操作。我们之后将这样的输出称为<def>特征图</def>。接下来我们需要介绍一些概念丰富一下卷积</p>
+<h2 id="_3">步长</h2>
+<p>在我们的局部感受野和卷积核的计算过程中，我们每次将局部感受野或平行或垂直移动一格，这其实是默认步长为1。</p>
+<p>那能不能设置成其他值呢？当然可以，比如说如果我们设置成2，输出的第二行和第二列都会空过去不再计算，如此得到最终2*2的输出，表示如下</p>
+<p><img alt="" src="../../img/02/01/conv4.jpg" /></p>
+<p>这里可以留意一下，当步长为2时，网络的输出变成输入尺寸的一半。这在之后的网络设计中可能会用到</p>
+<h2 id="padding">padding</h2>
+<p>细心的你可能发现了，我们在卷积之后的尺寸和输入相比变小了！这其实在应用中会带来一定的麻烦，为解决这个问题。
+一般将输入的边缘补0，然后再与卷积核进行卷积计算，这样得到的特征图会保持和输入相同的尺寸。</p>
+<p><img alt="" src="../../img/02/01/conv5.jpg" /></p>
+<h2 id="_4">共享权重和偏置</h2>
+<p>你可能发现，我们在计算特征图时候，使用了相同的卷积核对输入进行操作。这被我们称为<def>共享权重</def>。</p>
+<p>其实图中未展现出来的是，我们会对Out统一加相同的偏置，这个偏置被称为<def>共享偏置</def>。</p>
+<p>记得刚提到的卷积核的概念吗？他更具体来说包含共享权重和共享偏置。如此便实现了神经元的W*x+B的操作。</p>
+<h2 id="_5">多输入</h2>
+<p>如果是minist这种黑白图像，输入确实是只有一个<def>通道</def>，那如果遇到彩色图呢？他是三通道卷积的具体实现是什么样的？今儿说其他多通道的输入呢？</p>
+<p>当输入是多通道时，我们也需要定义和输入通道数相同的卷积核，然后每个卷积核和他对应的输入层进行上面的卷积操作。
+那这样输出是不是也会有多个通道，确实，但我们会将这多个通道的输出对应位置求和。实现过程如下图所示</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>通道，即有多少个输入的特征图</p>
+</div>
+<p><img alt="" src="../../img/02/01/conv6.png" /></p>
+<h2 id="_6">多输出</h2>
+<p>但我们定义了和输入相同数量的kernel，结果只得到了一个输出。如果是作为输出层也可以用，但如果是隐藏层呢，我们一般希望能有多个层，那怎么得到多输出呢？
+我们重复上面的多输入过程就好了，定义多个 与输入通道数相同的卷积核。这样就能得到多个输出了。具体实现如下图所示</p>
+<p><img alt="" src="../../img/02/01/conv7.png" /></p>
+<h2 id="pytorch">pytorch框架下卷积</h2>
+<p>你说这么复杂，要按照之前一样写代码岂不是要累死。其实不用担心，早有大佬设计了深度学习框架，我们在代码实现中只需要调用其中的函数就好。</p>
+<p>深度学习框架（Deep Learning Framework）是一种软件工具，用于简化和加速深度学习模型的开发和部署。深度学习框架提供了一系列的函数和工具，可以帮助开发者快速构建、训练和优化深度学习模型，同时支持多种硬件平台和操作系统。</p>
+<p>深度学习框架通常具有以下特点：</p>
+<p>支持多种深度学习模型：深度学习框架支持多种深度学习模型，包括卷积神经网络、循环神经网络、自编码器等。</p>
+<p>提供高效的计算库：深度学习框架提供了高效的计算库，可以在多种硬件平台上加速计算，包括CPU、GPU、TPU等。</p>
+<p>提供易用的API接口：深度学习框架提供了易用的API接口，可以帮助开发者快速构建和训练深度学习模型，同时提供了丰富的可视化工具，方便模型的调试和优化。</p>
+<p>支持多种编程语言：深度学习框架支持多种编程语言，包括Python、C++、Java等，方便开发者选择自己熟悉的语言进行开发。</p>
+<p>提供强大的社区支持：深度学习框架有着庞大的社区支持，包括开发者、研究人员、企业等，提供了丰富的学习资源和技术支持。</p>
+<p>目前，常用的深度学习框架包括TensorFlow、PyTorch、Keras、Caffe等，它们在不同的应用场景和问题上都有着广泛的应用。深度学习框架的出现和发展，极大地促进了深度学习的研究和应用，使得开发者可以更加方便地构建、训练和优化深度学习模型。</p>
+<p>如此处的pytorch中的卷积实现代码如下</p>
+<pre><code class="language-python">torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, bias=True)
+</code></pre>
+<p>具体参数解释如下：</p>
+<ul>
+<li>in_channels: 定义输入的通道数</li>
+<li>out_channels: 定义输出的通道数</li>
+<li>kernel_size: 定义卷积核的尺寸，实践中我们经常默认为3</li>
+<li>stride: 定义步长，一般来说默认为1</li>
+<li>padding: 定义对特征图补0的数量</li>
+<li>bias: 是否使用偏置</li>
+</ul>
+<p>至此我们便介绍完了卷积神经网络中最基本的卷积操作。对他的深入理解将在之后介绍。</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
