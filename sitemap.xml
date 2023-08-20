@@ -2,332 +2,352 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://learnopengl-cn.github.io/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/code_repo/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/intro/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/legacy/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/01%20OpenGL/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/02%20Perceptron/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/03%20XOR/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/04%20S%20neural/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/05%20loss%20functional/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/06%20Backpropagation/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/01%20Getting%20started/07%20Selflearning%20XOR/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20HardWayToDeep/01%201Channel%20minist/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20HardWayToDeep/02%20Gradient%20vanishing/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20HardWayToDeep/03%20generalization/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20HardWayToDeep/04%20overfitting/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20HardWayToDeep/05%20regulization/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/01%20Convolution/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/02%20Pooling/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/03%20Activation/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/04%20Fully%20conection/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/05%20Optimization%20Algorithm/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/06%20Normalization/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/07%20LeNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/08%20WhyDCNNUseful/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/09%20Deep%20introduce/01%20DNN%20feature/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/09%20Deep%20introduce/02%20pooling%20BP/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/01%20AlexNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/01%20AlexNet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/02%20VGG/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/02%20VGG/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/03%20GoogleNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/03%20GoogleNet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/04%20ResNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/04%20ResNet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/05%20DenseNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/05%20DenseNet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/06%20SENet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/06%20SENet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/03%20Model%20Loading/07%20MobileNet/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/03%20classicial%20model/07%20MobileNet/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/01%20Depth%20testing/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/01%20Introduction/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/02%20Stencil%20testing/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/02%20Stencil%20testing/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/03%20Blending/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/03%20Blending/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/04%20Face%20culling/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/04%20Face%20culling/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/05%20Framebuffers/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/05%20Framebuffers/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/06%20Cubemaps/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/06%20Cubemaps/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/07%20Advanced%20Data/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/07%20Advanced%20Data/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/08%20Advanced%20GLSL/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/08%20Advanced%20GLSL/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/09%20Geometry%20Shader/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/09%20Geometry%20Shader/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/10%20Instancing/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/10%20Instancing/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/11%20Anti%20Aliasing/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/04%20Segmentation/11%20Anti%20Aliasing/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/01%20Advanced%20Lighting/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/01%20Introduction/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/02%20Gamma%20Correction/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/02%20RCNN/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/04%20Normal%20Mapping/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/03%20Fast%20RCNN/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/05%20Parallax%20Mapping/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/04%20Faster%20RCNN/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/06%20HDR/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/05%20YOLOv1/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/07%20Bloom/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/06%20YOLOv2/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/08%20Deferred%20Shading/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/07%20YOLOv3/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/05%20Advanced%20Lighting/09%20SSAO/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/08%20SSD/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/01%20Debugging/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/05%20Detection/09%20Mask-RCNN/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/02%20Text%20Rendering/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/01%20Debugging/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/03%20SwinTransformer/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/02%20Text%20Rendering/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/04%20DETR/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/03%20SwinTransformer/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/05%20TransSeg/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/04%20DETR/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/06%20In%20Practice/06%20CLIP/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/05%20TransSeg/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/07%20PBR/01%20Theory/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/06%20Transformer/06%20CLIP/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/07%20PBR/02%20Lighting/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/07%20AIGC/01%20Theory/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/07%20PBR/03%20IBL/01%20Diffuse%20irradiance/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/07%20AIGC/02%20Lighting/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/07%20PBR/03%20IBL/02%20Specular%20IBL/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/07%20AIGC/03%20IBL/01%20Diffuse%20irradiance/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/08%20Guest%20Articles/2020/01%20Skeletal%20Animation/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/07%20AIGC/03%20IBL/02%20Specular%20IBL/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://learnopengl-cn.github.io/08%20Guest%20Articles/2022/03%20Area%20Lights/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <loc>https://learnopengl-cn.github.io/08%20Subdivision%20direction/Denoise/01%20Paper%20list/</loc>
+         <lastmod>2023-08-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://learnopengl-cn.github.io/08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/</loc>
+         <lastmod>2023-08-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://learnopengl-cn.github.io/08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/</loc>
+         <lastmod>2023-08-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://learnopengl-cn.github.io/08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/</loc>
+         <lastmod>2023-08-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://learnopengl-cn.github.io/09%20Mechine%20Learning/01%20Theory/</loc>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://learnopengl-cn.github.io/img/</loc>
-         <lastmod>2023-08-17</lastmod>
+         <lastmod>2023-08-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

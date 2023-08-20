@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnopengl-cn.github.io/05%20Detection/03%20Fast%20RCNN/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>Fast RCNN - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20OpenGL/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">再次实现minist</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/08%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20Stencil%20testing/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20Blending/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20Face%20culling/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20Framebuffers/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20Text%20Rendering/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07 AIGC/02 minist.md">光照</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">IBL</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/03%20IBL/01%20Diffuse%20irradiance/">漫反射辐照</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07%20AIGC/03%20IBL/02%20Specular%20IBL/">镜面IBL</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08 Subdivision direction/Denoise/01 SISR Paper list.md">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../02%20RCNN/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../04%20Faster%20RCNN/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/LearnOpenGL-CN/LearnOpenGL-CN">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://www.paypal.me/learnopengl/">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        支持原作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#fast-rcnn">Fast RCNN</a></li>
+        
+            <li><a href="#_1">整体结构</a></li>
+        
+            <li><a href="#_2">特征提取</a></li>
+        
+            <li><a href="#roi">ROI池化</a></li>
+        
+            <li><a href="#_3">检测头</a></li>
+        
+            <li><a href="#_4">损失函数</a></li>
+        
+            <li><a href="#_5">边界框回归原理</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="fast-rcnn">Fast RCNN</h1>
+<p>针对RCNN的问题，Fast RCNN使用一个网络统一了特征提取，分类，回归三个步骤。
+不再需要对每个候选区域进行单独的特征提取和分类，而是可以在一个前向传播中同时处理所有的候选区域，从而大大提高了训练和测试的速度。</p>
+<h2 id="_1">整体结构</h2>
+<p>网络的整体结构如下图所示</p>
+<p><img alt="" src="../../img/05/03/all.jpg" /></p>
+<p>1、对输入图像进行卷积神经网络的前向传播，以得到图像的特征图。</p>
+<p>2、对每个候选区域进行 RoI 池化操作，以得到每个区域的特征向量。</p>
+<p>3、将每个特征向量送入一组全连接层中，以得到每个区域的类别和位置信息。</p>
+<p>4、对每个区域的类别和位置信息进行损失计算，并将两个损失相加，以得到总的损失。</p>
+<h2 id="_2">特征提取</h2>
+<p>RCNN是对每一个特征图使用网络提取特征，这样会导致非常多的冗余计算。因此Fast RCNN对整张图像输入网络计算特征。
+然后将SS算法得到的坐标信息对应到特征图上截取特征表示。这一步的默认前提是：图像经过网络提取特征后对应的空间信息没有变化。</p>
+<p>由于提取的特征不是相同的尺寸，因此使用ROI层得到统一维度的特征向量</p>
+<h2 id="roi">ROI池化</h2>
+<p>如下图所示,</p>
+<p><img alt="" src="../../img/05/03/roi.jpg" /></p>
+<p>RoI最大池化层首先将原来W x H尺寸的窗口划分为m x n的网格大小，然后在每个小格子范围内通道独立的做最大池化得到 维度为m x n x C的特征。</p>
+<p>它的好处是无论输入尺寸是什么样的，都可以得到相同维度的输出。且避免了拉伸对图像带来的扭曲。</p>
+<h2 id="_3">检测头</h2>
+<p>Fast RCNN在获得ROI的输出后，通过全连接提取特征，然后输入两个并行层得到分类和回归结果。其中分类层由全连接和softmax组成，softmax得到(n+1)个输出，其中n表示类别。1表示前后背景。
+回归层得到输出边框回归的偏移量，对每个类k都输出四个偏移量。</p>
+<p>
+<script type="math/tex; mode=display"> t^k = (t_x^k, t_y^k, t_w^k, t_h^k) </script>
+</p>
+<h2 id="_4">损失函数</h2>
+<p>分类枝干的损失函数表示为</p>
+<p>
+<script type="math/tex; mode=display"> L_cls(p, u) = -log(p_u) </script>
+</p>
+<p>其中p表示网络预测值，u表示标准输出类别。</p>
+<p>回归枝干的损失函数表示为：</p>
+<p>
+<script type="math/tex; mode=display"> L_loc(t^u, v) = \sum_{i={x,y,w,h}} smooth_{L1}(t^u_i - v_i) </script>
+</p>
+<p>之前提到回归对每个k输出4个偏移量，在计算回归损失时只使用标准输出类别的那四个偏移量。smooth L1 loss表示为</p>
+<p>$$ </p>
+<p>smooth_{l1}(x) = \left{<script type="math/tex; mode=display">\begin{matrix}
+0.5x^2 & if |x|<2 \\ 
+|x|-0.5 & otherwith 
+\end{matrix}</script>\right.</p>
+<p>$$</p>
+<p>总的loss为</p>
+<p>
+<script type="math/tex; mode=display"> L(p,u,t^u,v) = L_cls(p, u) + \lambda[u \geq 1]L_loc(t^u, v) </script>
+</p>
+<p>其中<script type="math/tex"> [u \geq 1] </script>表示gt为背景类的话不计算他的损失函数， <script type="math/tex"> \lambda </script> 用于权衡两者损失，一般置1。</p>
+<h2 id="_5">边界框回归原理</h2>
+<p>在RCNN中提到边界框回归，但没有细讲他是怎么实现的。现在我们仔细介绍一下具体是怎么实现的。</p>
+<p><img alt="" src="../../img/05/03/anchorR.jpg" /></p>
+<p>如上图所示，绿色框为飞机的gt，红色为预测的positive anchor。但由于红框定位不准，如果iou过低会当作负样本。
+因此现在希望对红框进行微调，使他和GT更接近。</p>
+<p>现在我们利用一个四维向量(x,y,w,h)定义一个窗口，分别表示窗口的中心坐标、宽和高。
+如下图所示，我们希望找到一种关系，使得输入原始的anchor A经过映射得到一个跟真实窗口G更接近的回归窗口 <script type="math/tex"> {G}' </script>。</p>
+<p><img alt="" src="../../img/05/03/anchor2.jpg" /></p>
+<ul>
+<li>定义原始框 <script type="math/tex"> A = (A_x, A_y, A_w, A_h) </script>
+</li>
+<li>定义目标框 <script type="math/tex"> G = (G_x, G_y, G_w, G_h) </script>
+</li>
+<li>定义回归后的框为 <script type="math/tex"> {G}' = {G_x}', {G_y}', {G_w}', {G_h}' </script>
+</li>
+<li>寻找一种变换F。 
+<script type="math/tex; mode=display"> F(A) = {G}' </script>
+使 <script type="math/tex"> {G}' </script> 接近 G $$ </li>
+</ul>
+<p>F应该怎么映射呢？简单的想法是先平移，在缩放。</p>
+<ul>
+<li>平移x： <script type="math/tex; mode=display"> {G}'_x = A_w \cdot d_x(A) + A_x </script>
+</li>
+<li>平移y： <script type="math/tex; mode=display"> {G}'_y = A_h \cdot d_y(A) + A_y </script>
+</li>
+<li>缩放w： <script type="math/tex; mode=display"> {G}'_w = A_w \cdot exp(d_w(A)) </script>
+</li>
+<li>缩放h： <script type="math/tex; mode=display"> {G}'_h = A_h \cdot exp(d_h(A)) </script>
+</li>
+</ul>
+<p>所以，我们需要学习<script type="math/tex"> (d_x(A), d_y(A), d_w(A), d_h(A)) </script>四个变换。当且仅当anchor A和GT相差较小时，可以认为这种变换是一种线性变换， 那么就可以用线性回归来建模对窗口进行微调。</p>
+<p>现在我们利用线性回归，给定输入网络的特征图，定义为<script type="math/tex"> \phi(A) </script>,线性映射权重为<script type="math/tex"> W^T </script>,映射结果为<script type="math/tex"> d_(A)) </script>。用*表示{x,y,w,h},则映射关系可以表示为
+<script type="math/tex; mode=display"> d_*(A) = W_*^T \cdot \phi(A) </script>
+</p>
+<p>又目标为<script type="math/tex"> t_* </script>， 所以可定义损失函数L1 loss 为：</p>
+<p>
+<script type="math/tex; mode=display"> Loss = \sum_{i}^{N}| t_*^i - d_*^i | = \sum_{i}^{N}| t_*^i - W_*^T \cdot \phi(A) |  </script>
+</p>
+<p>为了方便描述，这里以L1损失为例介绍，而真实情况中一般使用smooth-L1损失。</p>
+<p>那目标映射关系<script type="math/tex"> t_* </script>又是怎么来的呢？可以通过</p>
+<p>
+<script type="math/tex; mode=display"> t_x = (x - x_a)/w_a </script>
+<script type="math/tex; mode=display"> t_y = (y - y_a)/h_a </script>
+<script type="math/tex; mode=display"> t_w = log(w/w_a) </script>
+<script type="math/tex; mode=display"> t_h = log(h/h_a) </script>
+</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

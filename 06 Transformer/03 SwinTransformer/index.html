@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnopengl-cn.github.io/06%20Transformer/03%20SwinTransformer/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>SwinTransformer - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20OpenGL/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">再次实现minist</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/08%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20Stencil%20testing/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20Blending/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20Face%20culling/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20Framebuffers/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20Text%20Rendering/">ViT</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07 AIGC/02 minist.md">光照</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">IBL</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/03%20IBL/01%20Diffuse%20irradiance/">漫反射辐照</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../07%20AIGC/03%20IBL/02%20Specular%20IBL/">镜面IBL</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08 Subdivision direction/Denoise/01 SISR Paper list.md">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../02%20Text%20Rendering/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../04%20DETR/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/LearnOpenGL-CN/LearnOpenGL-CN">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://www.paypal.me/learnopengl/">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        支持原作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#swin-transformer">Swin Transformer</a></li>
+        
+            <li><a href="#_1">创新点</a></li>
+        
+            <li><a href="#_2">引入</a></li>
+        
+            <li><a href="#_3">整体架构</a></li>
+        
+            <li><a href="#patch-partition">Patch Partition</a></li>
+        
+            <li><a href="#linear-embeding">Linear Embeding</a></li>
+        
+            <li><a href="#patch-merging">Patch Merging</a></li>
+        
+            <li><a href="#w-msa">W-MSA</a></li>
+        
+            <li><a href="#sw-msa">SW-MSA</a></li>
+        
+            <li><a href="#_4">总结</a></li>
+        
+            <li><a href="#_5">参考</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="swin-transformer">Swin Transformer</h1>
+<p>ViT作为vision transformer的开创性工作，一直无法克服计算量大的问题，这就限制了transformer的应用。
+Swin Transformer通过分层图像和Shifted Windows极大地解决了计算量大的问题，获得ICCV 2021的Best Paper。</p>
+<h2 id="_1">创新点</h2>
+<ul>
+<li>层次化</li>
+<li>Shifted Windows</li>
+</ul>
+<h2 id="_2">引入</h2>
+<p>在之前的ViT讲解中我们说到，将图像的输入转化为（N，D）图像嵌入。其中N=(W<em>H)/(P</em>P)。如此要对N个token做self attention。
+Swin transformer将N个token拆为N/n组，每组n个token，每组单独进行self attention。</p>
+<p>但这种方式又引入了新的问题。1）之前N个token可以获得全部输入的上下文信息，这也是transformer的优势，现在划分成组，组内的图像只能看到本组的图形信息。
+也就是感受野被限制在了n。 2）组和组之间信息无法交流。</p>
+<p>为了解决第一个问题，作者采用类似卷积神经网络中的层次化构建方法（Hierarchical feature maps）比如特征图尺寸中有对图像下采样4倍的，8倍的以及16倍的，
+这样的backbone有助于在此基础上构建目标检测，实例分割等任务。而在之前的Vision Transformer中是一开始就直接下采样16倍，后面的特征图也是维持这个下采样率不变。
+两者的对比如下图所示</p>
+<p><img alt="" src="../../img/06/03/swin1.jpg" /></p>
+<p>为解决第二个问题，作者提出Shifted Windows Multi-Head Self-Attention(SW-MSA)的概念，通过此方法能够让信息在相邻的窗口中进行传递。</p>
+<h2 id="_3">整体架构</h2>
+<p>网络的整体架构如下图所示</p>
+<p><img alt="" src="../../img/06/03/swin2.jpg" /></p>
+<p>图中左侧为网络主干，包含了四个不同大小的特征图的Stage。Stage1先通过一个Linear Embedding，其他stage先使用patch merging进行下采。
+然后经过Swin Transformer Block，模块由图（b）组成。注意图（b）中的两个block是前后出现的，而非二选一。</p>
+<p>stage4之后根据任务不同接不同的层，如果是分类任务，接上一个LN层、全局池化层以及全连接层得到最终输出。</p>
+<p>接下来将顺序的对Patch Partition，Linear Embeding，Patch Merging，W-MSA，SW-MSA进行介绍。</p>
+<h2 id="patch-partition">Patch Partition</h2>
+<p>这一步就是对图像进行裁块，并转为向量表示。图像裁块为4x4的Patch，又由于每个Patch有3个通道，所以转为一维长度就是64。
+原图宽高表示为W，H。则图像经过Patch Partition后shape为[W/4, H/4, 48]。</p>
+<h2 id="linear-embeding">Linear Embeding</h2>
+<p>这步通过一个卷积将图像shape由 [H/4, W/4, 48]变成了 [H/4, W/4, C]</p>
+<h2 id="patch-merging">Patch Merging</h2>
+<p>Patch Merging的操作有点类似与unpixelShuffle。如下图所示对 2x2 组的特征向量进行融合和压缩。</p>
+<p><img alt="" src="../../img/06/03/patch.png" /></p>
+<p>如果输入为[H,W,C]，经过此步骤后变为[H/2, W/2, C<em>4], 此时的输出经过LN和linear层的变换，得到[H/2, W/2, C</em>2]的输出。</p>
+<h2 id="w-msa">W-MSA</h2>
+<p>Windows Multi-head Self-Attention（W-MSA）模块是为了减少计算量。</p>
+<p>如下图所示，灰色为patch，红色为局部窗口。在这个例子中，原始MSA需要对N=8*8个token分别计算attention。</p>
+<p><img alt="" src="../../img/06/03/patch2.png" /></p>
+<p>现在按照MxM（图中M=4）大小划分成一个个Windows，然后单独对每个Windows内部进行Self-Attention。就需要4<em>(4</em>4)个token计算attention。
+具体差多少呢？论文中说是</p>
+<p>
+<script type="math/tex; mode=display"> /omiga(MSA) = 4hwC^2 + 2(hw)^2C </script>
+<script type="math/tex; mode=display"> /omiga(W-MSA) = 4hwC^2 + 2M^2hwC </script>
+</p>
+<p>具体怎么算的等我之后有精力回头加上吧，目前太多要继续添加的内容了。</p>
+<h2 id="sw-msa">SW-MSA</h2>
+<p>W-MSA虽好，但带来问题是划窗之间的信息相互不能交流，为解决该问题，作者提出了SW-MSA。
+如前所述，但现在要重新复述一遍，W-MSA和SW-MSA所在的Transformer模块是顺序使用的。</p>
+<p><img alt="" src="../../img/06/03/patch3.png" /></p>
+<p>SW-MSA是对W-MSA的窗口偏移了<script type="math/tex"> \left \lfloor \frac{M}{2} \right \rfloor </script>个像素。
+如上图举例所示，偏移后（右侧图像）划分的窗口可以使原始不同窗口间的信息互相交流。如，第二行第二列的4x4的窗口，他能够使第L层的四个窗口信息进行交流，</p>
+<p>但一个很蠢的问题是，这样就从4个窗口变成了9个，所以作者提出了一种高效的计算方法：Efficient batch computation for shifted configuration</p>
+<p>具体实现如下图所示：</p>
+<p><img alt="" src="../../img/06/03/patch4.png" /></p>
+<p>简单来说就是将A，B，C移到cyclic shift图示中新的位置，然后再按红线的划窗方式得到4个划窗后结果，这样就能够保证计算量是一样的。</p>
+<p>但问题又出来，把不同的区域合并在一起进行MSA，这信息不就乱窜了吗？</p>
+<p>所以作者紧接着采用了masked MSA，通过设置蒙板来隔绝不同区域的信息。不让patch计算自己划窗之外的attention。</p>
+<p>最后得到输出后，需要通过reverse cyclic shift将A，B，C继续放回原来的位置。</p>
+<p>总的来说，这里主要包含了作者秀技术的操作，cyclic shift， masked MSA 和 reverse cyclic shift都是用来方便计算的，
+最核心的还是第一步通过shift得到不同窗口融合W-MSA之间窗口的信息。</p>
+<h2 id="_4">总结</h2>
+<p>Swin Transformer 吸收了CNN的locality、translation invariance和hierarchical等优点，有效的降低了计算量的同时，模型在图像分类、目标检测、分割上全面超越SOTA。</p>
+<h2 id="_5">参考</h2>
+<p>https://blog.csdn.net/qq_37541097/article/details/121119988</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
