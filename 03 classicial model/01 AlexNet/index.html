@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/03%20classicial%20model/01%20AlexNet/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>AlexNet - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">再次实现minist</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/08%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li class="active">
+    <a href="./">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20MobileNet/">MoblieNet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20Text%20Rendering/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../02%20VGG/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#alexnet">AlexNet</a></li>
+        
+            <li><a href="#_1">说在本章之前</a></li>
+        
+            <li><a href="#alexnet_1">AlexNet特点</a></li>
+        
+            <li><a href="#alexnet_2">AlexNet简介</a></li>
+        
+            <li><a href="#alexnet_3">AlexNet网络结构</a></li>
+        
+            <li><a href="#relu">ReLU介绍</a></li>
+        
+            <li><a href="#dropout">Dropout</a></li>
+        
+            <li><a href="#_2">大数据集训练</a></li>
+        
+            <li><a href="#_3">数据增扩</a></li>
+        
+            <li><a href="#maxpooling">使用重叠的maxpooling</a></li>
+        
+            <li><a href="#lrn">使用LRN归一化层</a></li>
+        
+            <li><a href="#_4">代码实现</a></li>
+        
+            <li><a href="#_7">参考链接</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="alexnet">AlexNet</h1>
+<h2 id="_1">说在本章之前</h2>
+<p>关于本章的几个经典网络，相关文章浩如烟海，层出不穷。我一直在想我该通过怎样的方式才能讲出所有您所需要的内容。为此，
+我希望</p>
+<p>1）在每个文章之前将他的特点先简单罗列出来，您可能刚看到还不明白，但您可以在之后详细内容中遇到这些点，此时就需要您稍加留意了。</p>
+<p>2）我们在每节都会提供网络的代码，希望您能实现cifar10/cifar100分类任务。同时我会罗列一下改进的方向，希望您能通过修改代码更深入的理解网络内容。</p>
+<h2 id="alexnet_1">AlexNet特点</h2>
+<ul>
+<li>使用ReLU激活函数</li>
+<li>使用DropOut避免过拟合</li>
+<li>采用大数据集训练</li>
+<li>对数据集进行增扩操作</li>
+<li>多GPU训练</li>
+<li>使用重叠的maxpooling</li>
+<li>使用LRN归一化层</li>
+</ul>
+<h2 id="alexnet_2">AlexNet简介</h2>
+<p>虽然LeNet在80年代就被提出，但当时计算机硬件和软件的性能都比较有限，不足以支持更深、更宽的神经网络模型，因此LeNet的应用范围受到了一定的限制。
+人们不确定卷积神经网络是否能处理更复杂更大的数据。</p>
+<p>随着计算机硬件和软件的发展，特别是GPU的出现，神经网络模型的计算能力得到了很大的提升，可以更加高效地训练深度卷积神经网络模型。
+同时，随着数据集的不断增加，也为深度卷积神经网络的发展提供了更加丰富的数据支持。</p>
+<p>在这种背景下，由Alex Krizhevsky等人在2012年提出AlexNet，主要用于ILSVRC2012图像分类比赛，获得了当年的冠军。他可以算作现代深度卷积神经网路的开山之作，为后来的卷积神经网络模型的发展奠定了基础。
+AlexNet采用了更深、更宽的网络结构，采用了较大的卷积核和ReLU激活函数，使用了局部响应归一化（Local Response Normalization，LRN）处理，同时全连接层的设计也有所不同。他的设计更加复杂，可以处理更加复杂的数据，如高分辨率的图像数据。</p>
+<h2 id="alexnet_3">AlexNet网络结构</h2>
+<p>AlexNet网络结构如下：</p>
+<p><img alt="" src="../../img/03/01/AlexNet-1.png" /></p>
+<p>网络主要包含五个卷积层（Convlution），三个重叠的最大池化层（Overlapping MaxPooling）和三个全连接层（Full Connected，FC）。
+以下将整体介绍不同块的构成，可能有些组件您现在还不了解，但我希望能先给你一个整体拼图，之后会具体介绍单独的细节。</p>
+<ul>
+<li>Input：256x256的RGB三通道图像。因此输入维度是training_numx256x256x3。</li>
+<li>Layer1：Conv+ReLU+Pooling+LRN。其中Conv采用96个11x11大小的卷积核，步长为4。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
+<li>Layer2：Conv+ReLU+Pooling+LRN。其中Conv采用256个5x5的卷积核，步长为1，padding=2。Overlapping MaxPooling采用3x3卷积核，步长为2。</li>
+<li>Layer3：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
+<li>Layer4：Conv+ReLU，其中Conv采用384个3x3的卷积核，步长为1，padding=1。</li>
+<li>Layer5：Conv+ReLU+Pooling+Dropout，其中Conv采用256个3x3的卷积核，步长为1，padding=1。Overlapping MaxPooling采用3x3卷积核，步长为2。Dropout rate=0.5。</li>
+<li>Layer6：FC+ReLU+Dropout，输出4096个神经元。ropout rate=0.5。</li>
+<li>Layer7：FC+ReLU，输出4096个神经元</li>
+<li>Output：FC+ReLU，1000个神经元。</li>
+</ul>
+<h2 id="relu">ReLU介绍</h2>
+<p>之前我们在激活函数简单介绍过ReLU，此处详细介绍AlexNet为什么采用ReLU引入非线性。
+首先引入两个概念，饱和函数和非饱和函数
+- 饱和函数：当自变量趋于无穷大的时候，其值有界。如tanh函数值域为[-1, 1]
+- 非饱和函数：当自变量趋于无穷大的时候，其值也趋向无穷大。如ReLU函数当输入趋于无穷大，值也为无穷大。</p>
+<p>由于非饱和函数比饱和函数在梯度下降时收敛速度更快，所以作者采用ReLU替代tanH函数。下图展示了在一个4层的卷积网络中使用ReLU函数和tanH函数对比。
+在CIFAR-10数据集上达到25%的训练错误率RelU要比相同条件下使用tanh函数快6倍。</p>
+<p><img alt="" src="../../img/03/01/tanh.png" /></p>
+<p>此外，ReLU函数由于是线性的，所以其导数始终为1，可以极大减少计算量。</p>
+<h2 id="dropout">Dropout</h2>
+<p>引入Dropout主要是为了防止过拟合。在神经网络中Dropout通过修改神经网络本身结构来实现，对于某一层的神经元，通过定义的概率将神经元置为0，
+这个神经元就不参与前向和后向传播，就如同在网络中被删除了一样，同时保持输入层与输出层神经元的个数不变，然后按照神经网络的学习方法进行参数更新。
+在下一次迭代中，又重新随机删除一些神经元（置为0），直至训练结束。</p>
+<p><img alt="" src="../../img/03/01/dropout.jpg" /></p>
+<p>需要注意的是，Dropout只在训练中将某些神经元置0，测试时依旧采用所有的参数。就像演戏时候随机几个部队完成某项任务，真正打仗时候所有部队一起出动。
+在另一个意义上来讲，你可以把每次训练时候留下的神经元作为一个网络，这样其实训练过程训练了多个网络，最终的结果由这些多个网络共同决定。</p>
+<h2 id="_2">大数据集训练</h2>
+<p>作者在论文中认为自己的贡献点包含：训练了一个很大的CNN来处理大规模数据并取得了目前最好的成绩。这一点毋庸置疑，因为AlexNet确实是大数据集
+训练深度卷积神经网络的先河。那之前为什么没人使用大数据集训练呢？因为1）之前缺乏大数据集。但这个显然不是主要原因，毕竟缺乏可以采集嘛。
+2）运算资源不足。之前计算机硬件的性能也非常有限，神经网络的训练需要花费大量的时间和计算资源，这也限制了神经网络在大规模数据集上的应用。
+3）容易过拟合。所以AlexNet采用了更大的网络，Dropout，数据增扩等方式解决过拟合，提升网络泛化性。而这几点直到目前依旧是解决过拟合问题的主要途径。</p>
+<h2 id="_3">数据增扩</h2>
+<p>AlexNet在训练时，在数据扩充（data augmentation）这样处理： </p>
+<p>（1）随机裁剪，对256×256的图片进行随机裁剪到224×224，然后进行水平翻转，相当于将样本数量增加了（（256-224）^2）×2=2048倍； </p>
+<p>（2）测试的时候，对左上、右上、左下、右下、中间分别做了5次裁剪，然后翻转，共10个裁剪，之后对结果求平均。作者说，如果不做随机裁剪，大网络基本上都过拟合； </p>
+<p>（3）对RGB空间做PCA（主成分分析），然后对主成分做一个（0, 0.1）的高斯扰动，也就是对颜色、光照作变换，结果使错误率又下降了1%。</p>
+<h2 id="maxpooling">使用重叠的maxpooling</h2>
+<p>此前CNN中普遍使用平均池化，AlexNet全部使用最大池化，避免平均池化的模糊化效果。
+并且AlexNet中提出让步长比池化核的尺寸小的观点，这样池化层的输出之间会有重叠和覆盖，提升了特征的丰富性。实际使用kernel size=3，stride=2。
+但能否提升特征丰富度很难说，因为后来的网络设计一般采用相同的kernel size 和 步长。</p>
+<h2 id="lrn">使用LRN归一化层</h2>
+<p>这一点放在最后是因为这个好像真没用，至少是后来的网络设计不常用。
+由于ReLU函数不像tanh和sigmoid一样有一个有限的值域区间，所以在ReLU之后需要进行归一化处理，
+LRN的思想来源于神经生物学中一个叫做“侧抑制”的概念，指的是被激活的神经元抑制周围的神经元。
+所以对局部神经元的活动创建竞争机制，使得其中响应比较大的值变得相对更大，并抑制其他反馈较小的神经元，增强了模型的泛化能力。</p>
+<h2 id="_4">代码实现</h2>
+<p>这里我们希望能用AlexNet分类Cifar10。首先要介绍以下cifar10。
+CIFAR-10数据集是机器学习和计算机视觉领域中常用的数据集之一，被广泛用于图像分类、目标识别、物体检测等任务的研究和评估。
+由于CIFAR-10数据集的图像尺寸较小、类别较少，因此相对于其他数据集，它的计算资源和训练时间要求较低，适合用于模型设计和算法研究的快速验证。
+CIFAR-10数据集包含10个类别的32x32像素的RGB彩色图像，每个类别有6000张图像，共有50000张训练图像和10000张测试图像。</p>
+<h3 id="_5">数据加载</h3>
+<pre><code class="language-python">import torch
+import torchvision
+from torchvision import transforms as transforms
+
+transform = transforms.Compose(
+    [transforms.RandomHorizontalFlip(), 
+     transforms.ToTensor(), 
+     transforms.Normalize((0.5, 0.5, 0.5), 
+                          (0.5, 0.5, 0.5))])
+
+cifar10_classes = ('plane', 'car', 'bird', 'cat',
+                   'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+
+
+def cifar10_loader(train=True, batch_size=128):
+    set = torchvision.datasets.CIFAR10(root='~/data', train=train,
+                                       download=True, transform=transform)
+    loader = torch.utils.data.DataLoader(set, batch_size=batch_size,
+                                         shuffle=True, num_workers=4)
+    return loader
+</code></pre>
+<h3 id="_6">模型定义</h3>
+<pre><code class="language-python">class AlexNet(nn.Module):
+
+    def __init__(self, num_classes=10):
+        super(AlexNet, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(64, 192, kernel_size=3, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2),
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2)
+        )
+        self.fc_layers = nn.Sequential(
+            nn.Dropout(0.6),
+            nn.Linear(4096, 2048),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.6),
+            nn.Linear(2048, 2048),
+            nn.ReLU(inplace=True),
+            nn.Linear(2048, num_classes),
+        )
+
+    def forward(self, x):
+        conv_features = self.features(x)
+        flatten = conv_features.view(conv_features.size(0), -1)
+        fc = self.fc_layers(flatten)
+        return fc
+</code></pre>
+<h2 id="_7">参考链接</h2>
+<p>[1] https://learnopencv.com/understanding-alexnet/
+[2] https://github.com/AbhishekTaur/AlexNet-CIFAR-10</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="我对DNN知识系统整理的一次尝试">
         
-        <link rel="canonical" href="https://learnopengl-cn.github.io/05%20Detection/06%20YOLOv2/">
+        <link rel="canonical" href="https://learnai-cn.github.io/05%20Detection/06%20YOLOv2/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
 
-	<title>HDR - LearnAI-CN</title>
+	<title>YOLOv2 - LearnAI-CN</title>
 
         <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -65,7 +65,7 @@
             
             
             
-                <li class="dropdown">
+                <li class="dropdown active">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                     
@@ -82,7 +82,7 @@
         
             
 <li >
-    <a href="../../01%20Getting%20started/01%20OpenGL/">深度学习介绍</a>
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
 </li>
 
         
@@ -313,25 +313,25 @@
         
             
 <li >
-    <a href="../../04%20Segmentation/02%20Stencil%20testing/">FCN</a>
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
 </li>
 
         
             
 <li >
-    <a href="../../04%20Segmentation/03%20Blending/">Unet</a>
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
 </li>
 
         
             
 <li >
-    <a href="../../04%20Segmentation/04%20Face%20culling/">DeepLab系列</a>
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
 </li>
 
         
             
 <li >
-    <a href="../../04%20Segmentation/05%20Framebuffers/">DANet</a>
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
 </li>
 
         
@@ -371,6 +371,18 @@
             
 <li >
     <a href="../05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20YOLOv3/">YOLOv3</a>
 </li>
 
         
@@ -434,33 +446,6 @@
 </li>
 
         
-            
-<li >
-    <a href="../../07 AIGC/02 minist.md">光照</a>
-</li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" class="nav-title">IBL</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../07%20AIGC/03%20IBL/01%20Diffuse%20irradiance/">漫反射辐照</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../07%20AIGC/03%20IBL/02%20Specular%20IBL/">镜面IBL</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
     </ul>
   </li>
 
@@ -472,7 +457,7 @@
         
             
 <li >
-    <a href="../../08 Subdivision direction/Denoise/01 SISR Paper list.md">Denoise</a>
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
 </li>
 
         
@@ -547,19 +532,19 @@
                         <i class="fa fa-search"></i> 搜索
                     </a>
                 </li>
-                <li class="disabled">
-                    <a rel="next" >
+                <li >
+                    <a rel="next" href="../05%20YOLOv1/">
                         <i class="fa fa-arrow-left"></i> 上一节
                     </a>
                 </li>
-                <li class="disabled">
-                    <a rel="prev" >
+                <li >
+                    <a rel="prev" href="../07%20YOLOv3/">
                         下一节 <i class="fa fa-arrow-right"></i>
                     </a>
                 </li>
                 
                 <li>
-                    <a href="https://github.com/LearnOpenGL-CN/LearnOpenGL-CN">
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
                         
                             <i class="fa fa-github"></i>
                         
@@ -568,9 +553,9 @@
                 </li>
                 
                 <li>
-                    <a href="https://www.paypal.me/learnopengl/">
+                    <a href="/img/self.png">
                             <img class="paypal" src="/img/paypal_logo.png" alt="">
-                        支持原作者
+                        关于作者
                     </a>
                 </li>
             </ul>
@@ -582,148 +567,122 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#hdr">HDR</a></li>
+        <li class="main active"><a href="#yolov2">YOLOv2</a></li>
         
-            <li><a href="#_1">浮点帧缓冲</a></li>
+            <li><a href="#_1">改进列表</a></li>
         
-            <li><a href="#_2">色调映射</a></li>
+            <li><a href="#batch-normalization">Batch Normalization</a></li>
         
-            <li><a href="#_3">附加资源</a></li>
+            <li><a href="#high-resolution-classifier">High Resolution Classifier</a></li>
+        
+            <li><a href="#convolutional-with-anchor-boxes">Convolutional With Anchor Boxes</a></li>
+        
+            <li><a href="#dimension-clusters">Dimension Clusters</a></li>
+        
+            <li><a href="#direct-location-prediction">Direct location prediction</a></li>
+        
+            <li><a href="#fine-grained-features">Fine-Grained Features</a></li>
+        
+            <li><a href="#multi-scale-training">Multi-Scale Training</a></li>
+        
+            <li><a href="#faster">Faster</a></li>
+        
+            <li><a href="#_2">参考</a></li>
         
     
     </ul>
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="hdr">HDR</h1>
-<table>
-<thead>
-<tr>
-<th>原文</th>
-<th><a href="http://learnopengl.com/#!Advanced-Lighting/HDR">HDR</a></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>作者</td>
-<td>JoeyDeVries</td>
-</tr>
-<tr>
-<td>翻译</td>
-<td>Krasjet</td>
-</tr>
-<tr>
-<td>校对</td>
-<td>暂无</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>本节暂未进行完全的重写，错误可能会很多。如果可能的话，请对照原文进行阅读。如果有报告本节的错误，将会延迟至重写之后进行处理。</p>
-</div>
-<p>一般来说，当存储在帧缓冲(Framebuffer)中时，亮度和颜色的值是默认被限制在0.0到1.0之间的。这个看起来无辜的语句使我们一直将亮度与颜色的值设置在这个范围内，尝试着与场景契合。这样是能够运行的，也能给出还不错的效果。但是如果我们遇上了一个特定的区域，其中有多个亮光源使这些数值总和超过了1.0，又会发生什么呢？答案是这些片段中超过1.0的亮度或者颜色值会被约束在1.0，从而导致场景混成一片，难以分辨：</p>
-<p><img alt="" src="../../img/05/06/hdr_clamped.png" /></p>
-<p>这是由于大量片段的颜色值都非常接近1.0，在很大一个区域内每一个亮的片段都有相同的白色。这损失了很多的细节，使场景看起来非常假。</p>
-<p>解决这个问题的一个方案是减小光源的强度从而保证场景内没有一个片段亮于1.0。然而这并不是一个好的方案，因为你需要使用不切实际的光照参数。一个更好的方案是让颜色暂时超过1.0，然后将其转换至0.0到1.0的区间内，从而防止损失细节。</p>
-<p>显示器被限制为只能显示值为0.0到1.0间的颜色，但是在光照方程中却没有这个限制。通过使片段的颜色超过1.0，我们有了一个更大的颜色范围，这也被称作<strong>HDR(High Dynamic Range, 高动态范围)</strong>。有了HDR，亮的东西可以变得非常亮，暗的东西可以变得非常暗，而且充满细节。</p>
-<p>HDR原本只是被运用在摄影上，摄影师对同一个场景采取不同曝光拍多张照片，捕捉大范围的色彩值。这些图片被合成为HDR图片，从而综合不同的曝光等级使得大范围的细节可见。看下面这个例子，左边这张图片在被光照亮的区域充满细节，但是在黑暗的区域就什么都看不见了；但是右边这张图的高曝光却可以让之前看不出来的黑暗区域显现出来。</p>
-<p><img alt="" src="../../img/05/06/hdr_image.png" /></p>
-<p>这与我们眼睛工作的原理非常相似，也是HDR渲染的基础。当光线很弱的啥时候，人眼会自动调整从而使过暗和过亮的部分变得更清晰，就像人眼有一个能自动根据场景亮度调整的自动曝光滑块。</p>
-<p>HDR渲染和其很相似，我们允许用更大范围的颜色值渲染从而获取大范围的黑暗与明亮的场景细节，最后将所有HDR值转换成在[0.0, 1.0]范围的LDR(Low Dynamic Range,低动态范围)。转换HDR值到LDR值得过程叫做色调映射(Tone Mapping)，现在现存有很多的色调映射算法，这些算法致力于在转换过程中保留尽可能多的HDR细节。这些色调映射算法经常会包含一个选择性倾向黑暗或者明亮区域的参数。</p>
-<p>在实时渲染中，HDR不仅允许我们超过LDR的范围[0.0, 1.0]与保留更多的细节，同时还让我们能够根据光源的<strong>真实</strong>强度指定它的强度。比如太阳有比闪光灯之类的东西更高的强度，那么我们为什么不这样子设置呢?(比如说设置一个10.0的漫亮度) 这允许我们用更现实的光照参数恰当地配置一个场景的光照，而这在LDR渲染中是不能实现的，因为他们会被上限约束在1.0。</p>
-<p>因为显示器只能显示在0.0到1.0范围之内的颜色，我们肯定要做一些转换从而使得当前的HDR颜色值符合显示器的范围。简单地取平均值重新转换这些颜色值并不能很好的解决这个问题，因为明亮的地方会显得更加显著。我们能做的是用一个不同的方程与/或曲线来转换这些HDR值到LDR值，从而给我们对于场景的亮度完全掌控，这就是之前说的色调变换，也是HDR渲染的最终步骤。</p>
-<h2 id="_1">浮点帧缓冲</h2>
-<p>在实现HDR渲染之前，我们首先需要一些防止颜色值在每一个片段着色器运行后被限制约束的方法。当帧缓冲使用了一个标准化的定点格式(像<code>GL_RGB</code>)为其颜色缓冲的内部格式，OpenGL会在将这些值存入帧缓冲前自动将其约束到0.0到1.0之间。这一操作对大部分帧缓冲格式都是成立的，除了专门用来存放被拓展范围值的浮点格式。</p>
-<p>当一个帧缓冲的颜色缓冲的内部格式被设定成了<code>GL_RGB16F</code>, <code>GL_RGBA16F</code>, <code>GL_RGB32F</code> 或者<code>GL_RGBA32F</code>时，这些帧缓冲被叫做浮点帧缓冲(Floating Point Framebuffer)，浮点帧缓冲可以存储超过0.0到1.0范围的浮点值，所以非常适合HDR渲染。</p>
-<p>想要创建一个浮点帧缓冲，我们只需要改变颜色缓冲的内部格式参数就行了（注意<code>GL_FLOAT</code>参数)：</p>
-<pre><code class="language-c++">glBindTexture(GL_TEXTURE_2D, colorBuffer);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);  
-</code></pre>
-<p>默认的帧缓冲默认一个颜色分量只占用8位(bits)。当使用一个使用32位每颜色分量的浮点帧缓冲时(使用<code>GL_RGB32F</code> 或者<code>GL_RGBA32F</code>)，我们需要四倍的内存来存储这些颜色。所以除非你需要一个非常高的精确度，32位不是必须的，使用<code>GLRGB16F</code>就足够了。</p>
-<p>有了一个带有浮点颜色缓冲的帧缓冲，我们可以放心渲染场景到这个帧缓冲中。在这个教程的例子当中，我们先渲染一个光照的场景到浮点帧缓冲中，之后再在一个铺屏四边形(Screen-filling Quad)上应用这个帧缓冲的颜色缓冲，代码会是这样子：</p>
-<pre><code class="language-c++">glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
-    // [...] 渲染(光照的)场景
-glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-// 现在使用一个不同的着色器将HDR颜色缓冲渲染至2D铺屏四边形上
-hdrShader.Use();
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, hdrColorBufferTexture);
-RenderQuad();
-</code></pre>
-<p>这里场景的颜色值存在一个可以包含任意颜色值的浮点颜色缓冲中，值可能是超过1.0的。这个简单的演示中，场景被创建为一个被拉伸的立方体通道和四个点光源，其中一个非常亮的在隧道的尽头：</p>
-<pre><code class="language-c++">std::vector&lt;glm::vec3&gt; lightColors;
-lightColors.push_back(glm::vec3(200.0f, 200.0f, 200.0f));
-lightColors.push_back(glm::vec3(0.1f, 0.0f, 0.0f));
-lightColors.push_back(glm::vec3(0.0f, 0.0f, 0.2f));
-lightColors.push_back(glm::vec3(0.0f, 0.1f, 0.0f));  
-</code></pre>
-<p>渲染至浮点帧缓冲和渲染至一个普通的帧缓冲是一样的。新的东西就是这个的<code>hdrShader</code>的片段着色器，用来渲染最终拥有浮点颜色缓冲纹理的2D四边形。我们来定义一个简单的直通片段着色器(Pass-through Fragment Shader)：</p>
-<pre><code class="language-c++">#version 330 core
-out vec4 color;
-in vec2 TexCoords;
-
-uniform sampler2D hdrBuffer;
-
-void main()
-{             
-    vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
-    color = vec4(hdrColor, 1.0);
-}  
-</code></pre>
-<p>这里我们直接采样了浮点颜色缓冲并将其作为片段着色器的输出。然而，这个2D四边形的输出是被直接渲染到默认的帧缓冲中，导致所有片段着色器的输出值被约束在0.0到1.0间，尽管我们已经有了一些存在浮点颜色纹理的值超过了1.0。</p>
-<p><img alt="" src="../../img/05/06/hdr_direct.png" /></p>
-<p>很明显，在隧道尽头的强光的值被约束在1.0，因为一大块区域都是白色的，过程中超过1.0的地方损失了所有细节。因为我们直接转换HDR值到LDR值，这就像我们根本就没有应用HDR一样。为了修复这个问题我们需要做的是无损转化所有浮点颜色值回0.0-1.0范围中。我们需要应用到色调映射。</p>
-<h2 id="_2">色调映射</h2>
-<p>色调映射(Tone Mapping)是一个损失很小的转换浮点颜色值至我们所需的LDR[0.0, 1.0]范围内的过程，通常会伴有特定的风格的色平衡(Stylistic Color Balance)。</p>
-<p>最简单的色调映射算法是Reinhard色调映射，它涉及到分散整个HDR颜色值到LDR颜色值上，所有的值都有对应。Reinhard色调映射算法平均地将所有亮度值分散到LDR上。我们将Reinhard色调映射应用到之前的片段着色器上，并且为了更好的测量加上一个Gamma校正过滤(包括SRGB纹理的使用)：</p>
-<pre><code class="language-c++">void main()
-{             
-    const float gamma = 2.2;
-    vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
-
-    // Reinhard色调映射
-    vec3 mapped = hdrColor / (hdrColor + vec3(1.0));
-    // Gamma校正
-    mapped = pow(mapped, vec3(1.0 / gamma));
-
-    color = vec4(mapped, 1.0);
-}   
-</code></pre>
-<p>有了Reinhard色调映射的应用，我们不再会在场景明亮的地方损失细节。当然，这个算法是倾向明亮的区域的，暗的区域会不那么精细也不那么有区分度。</p>
-<p><img alt="" src="../../img/05/06/hdr_reinhard.png" /></p>
-<p>现在你可以看到在隧道的尽头木头纹理变得可见了。用了这个非常简单地色调映射算法，我们可以合适的看到存在浮点帧缓冲中整个范围的HDR值，使我们能在不丢失细节的前提下，对场景光照有精确的控制。</p>
-<p>另一个有趣的色调映射应用是曝光(Exposure)参数的使用。你可能还记得之前我们在介绍里讲到的，HDR图片包含在不同曝光等级的细节。如果我们有一个场景要展现日夜交替，我们当然会在白天使用低曝光，在夜间使用高曝光，就像人眼调节方式一样。有了这个曝光参数，我们可以去设置可以同时在白天和夜晚不同光照条件工作的光照参数，我们只需要调整曝光参数就行了。</p>
-<p>一个简单的曝光色调映射算法会像这样：</p>
-<pre><code class="language-c++">uniform float exposure;
-
-void main()
-{             
-    const float gamma = 2.2;
-    vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
-
-    // 曝光色调映射
-    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
-    // Gamma校正 
-    mapped = pow(mapped, vec3(1.0 / gamma));
-
-    color = vec4(mapped, 1.0);
-}  
-</code></pre>
-<p>在这里我们将<code>exposure</code>定义为默认为1.0的<code>uniform</code>，从而允许我们更加精确设定我们是要注重黑暗还是明亮的区域的HDR颜色值。举例来说，高曝光值会使隧道的黑暗部分显示更多的细节，然而低曝光值会显著减少黑暗区域的细节，但允许我们看到更多明亮区域的细节。下面这组图片展示了在不同曝光值下的通道：</p>
-<p><img alt="" src="../../img/05/06/hdr_exposure.png" /></p>
-<p>这个图片清晰地展示了HDR渲染的优点。通过改变曝光等级，我们可以看见场景的很多细节，而这些细节可能在LDR渲染中都被丢失了。比如说隧道尽头，在正常曝光下木头结构隐约可见，但用低曝光木头的花纹就可以清晰看见了。对于近处的木头花纹来说，在高曝光下会能更好的看见。</p>
-<p>你可以在<a href="http://learnopengl.com/code_viewer.php?code=advanced-lighting/hdr" title="这里">这里</a>找到这个演示的源码和HDR的<a href="http://learnopengl.com/code_viewer.php?code=advanced-lighting/hdr&amp;type=vertex" title="顶点">顶点</a>和<a href="http://learnopengl.com/code_viewer.php?code=advanced-lighting/hdr&amp;type=fragment" title="片段">片段</a>着色器。</p>
-<h3 id="hdr_1">HDR拓展</h3>
-<p>在这里展示的两个色调映射算法仅仅是大量(更先进)的色调映射算法中的一小部分，这些算法各有长短。一些色调映射算法倾向于特定的某种颜色/强度，也有一些算法同时显示低高曝光颜色从而能够显示更加多彩和精细的图像。也有一些技巧被称作自动曝光调整(Automatic Exposure Adjustment)或者叫人眼适应(Eye Adaptation)技术，它能够检测前一帧场景的亮度并且缓慢调整曝光参数模仿人眼使得场景在黑暗区域逐渐变亮或者在明亮区域逐渐变暗。</p>
-<p>HDR渲染的真正优点在庞大和复杂的场景中应用复杂光照算法会被显示出来，但是出于教学目的创建这样复杂的演示场景是很困难的，这个教程用的场景是很小的，而且缺乏细节。但是如此简单的演示也是能够显示出HDR渲染的一些优点：在明亮和黑暗区域无细节损失，因为它们可以通过色调映射重新获得；多个光照的叠加不会导致亮度被截断的区域的出现，光照可以被设定为它们原来的亮度值而不是被LDR值限制。而且，HDR渲染也使一些有趣的效果更加可行和真实; 其中一个效果叫做泛光(Bloom)，我们将在下一节讨论。</p>
-<h2 id="_3">附加资源</h2>
+<h1 id="yolov2">YOLOv2</h1>
+<p>yolov2是YOLO算法的改进版本，相比于YOLO算法，YOLOv2在目标检测的精度和速度上都有所提高。</p>
+<h2 id="_1">改进列表</h2>
 <ul>
-<li><a href="http://gamedev.stackexchange.com/questions/62836/does-hdr-rendering-have-any-benefits-if-bloom-wont-be-applied">如果泛光效果不被应用HDR渲染还有好处吗？</a>: 一个StackExchange问题，其中有一个答案非常详细地解释HDR渲染的好处。</li>
-<li><a href="http://photo.stackexchange.com/questions/7630/what-is-tone-mapping-how-does-it-relate-to-hdr">什么是色调映射? 它与HDR有什么联系？</a>: 另一个非常有趣的答案，用了大量图片解释色调映射。</li>
+<li>Batch Normalization</li>
+<li>High Resolution Classifier</li>
+<li>Convolutional With Anchor Boxes</li>
+<li>Dimension Clusters</li>
+<li>Direct location prediction</li>
+<li>Fine-Grained Features</li>
+<li>Multi-Scale Training</li>
 </ul>
+<p>几种方法的效果对比如下图所示</p>
+<p><img alt="" src="../../img/05/06/perform.jpg" /></p>
+<h2 id="batch-normalization">Batch Normalization</h2>
+<p>BN在15年提出后成功解决了训练难度大，网络每层分布变化的问题。因此yolov2在网络中引入了该技巧，并取得了mAP提升2%的收益。</p>
+<h2 id="high-resolution-classifier">High Resolution Classifier</h2>
+<p>之前我们提过yolov1采用了448<em>448的输入分辨率，当时是考虑到原始imageNet采用的224</em>224的输入，而更大尺寸的输入更有利于检测。
+在yolov2中作者认为之前存在一个问题：直接用224<em>224训练好的预训练模型作为backbone效果还是不好。所以作者在检测前用448</em>448的图像finetune分类网络。所以目前的步骤是：
+- 使用224 * 224的imageNet图像训练分类网络大概160个epoch，这个分类网络是作者自定义的DarkNet19，含有19个卷积层和5个池化层。
+- 使用448 * 448的imageNet图像finetune分类网络，训练10个epoch，以此来适应高分辨率输入。
+- 使用448 * 448的检测数据集（例如coco）进行微调整个网络。
+通过该方式提升了4%mAP</p>
+<h2 id="convolutional-with-anchor-boxes">Convolutional With Anchor Boxes</h2>
+<p>yolov1中首先经过全连接层，然后预测框的坐标和宽高信息。前者会导致丢失空间信息，定位不准，后者网络回归的难度较大。为此
+yolov2借鉴了Faster R-CNN的思想，引入anchor。其主要改进如下</p>
+<p>1、删除网络中的全连接层和池化层，确保输出的卷积特征图有更高的分辨率
+2、缩减网络输入为416<em>416。这一步的目的是为了让后面产生的卷积特征图宽高都为奇数，这样就可以产生一个center cell。
+因为作者发现很多大目标都在图像中间，如果是偶数的话中心的四个坐标都要用来预测该物体，但奇数只需要使用一个就好了。
+最终yolov2将416</em>416的输入得到13*13的特征图。</p>
+<p>加入anchor boxes后，网络可以预测13<em>13</em>9=1521个boxes，但之前只有7<em>7</em>2=98个，所以召回率上升，准确率下降。</p>
+<h2 id="dimension-clusters">Dimension Clusters</h2>
+<p>Faster R-CNN的anchor是<strong>精选的先验框</strong>，尺度比例都预先定义好了，然后在训练中让网络学会调整boxes的宽高维度。
+那有没有更好的预定义框呢？作者想通过K-means对训练集中的boxes进行了聚类，进而自动找到更好的boxes宽高维度。</p>
+<p>但传统的K-means采用欧式距离衡量差异，box的尺寸越大误差越大，所以作者定义IOU为距离函数，使得误差和box的大小无关。</p>
+<p>下图中左边为聚类结果，</p>
+<p><img alt="" src="../../img/05/06/kmeans.png" /></p>
+<p>横轴标志聚类中心数量，右边表示平均IOU，很自然的当聚类中心越多，IOU越高。综合考虑模型复杂度和召回率，作者最终选取5个聚类中心作为先验框。
+右侧的图像显示了VOC和COCO相对质心的位置。两组先验框都更偏向于较细、较高的边界框，而COCO比VOC在大小方面有更大的变化。</p>
+<p>通过该方式发现
+（1）采用聚类分析得到的先验框比手动设置的先验框平均IOU值更高，因此模型更容易训练学习。
+（2）仅选取5种box就能达到Faster RCNN的9种box的效果。</p>
+<h2 id="direct-location-prediction">Direct location prediction</h2>
+<p>每个检测模型中怎么回归框都是一个很重点的工作，在yolov2中，因为采用了Faster RCNN的anchor思想，因此开始也采用它回归框的计算。但后来发现该方法收敛不稳定，推断是预测anchor框中心位置（x，y）的问题。因此对其进行了改进。</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>bounding boxs：为网络预测的用于定位物体位置的框。
+anchor: 为了便于网络预测，提前定义的一组框。网络会对这些预定义的anchor进行回归得到bounding box。</p>
+</div>
+<p>在Faster RCNN中，中心(x, y)的预测公式如下：</p>
+<p>
+<script type="math/tex; mode=display"> x = (t_x * w_a) + x_a </script>
+<script type="math/tex; mode=display"> y = (t_y * h_a) + y_a </script>
+</p>
+<p>这个公式是无约束的，预测的边界框很容易向任何方向偏移。当<script type="math/tex"> t_x = 1</script>时，box向左偏移一个anchor的宽度；当<script type="math/tex"> t_x = -1</script>时，box向右偏移一个anchor的宽度，<script type="math/tex"> t_y </script>同理。
+但这样导致的问题是，每个位置预测的框可以在图像的任何一个位置，导致模型不稳定。</p>
+<p>所以在预测中心坐标的公式中，yolov2采用和yolov1相同的方法，即预测边界框中心点相对于对应cell左上角位置的相对偏移值。网络在最后一个卷积层输出13*13的特征图，每个位置通过anchor box先验预测5个bounding box，即上文聚类的结果，每个bounding box预测得到5个值。
+分别是tx、ty、tw、th和to（类似YOLOv1的confidence）。</p>
+<p>新的anchor box回归函数如下：</p>
+<p>
+<script type="math/tex; mode=display"> b_x = \sigma(t_x) + c_x </script>
+<script type="math/tex; mode=display"> b_y = \sigma(t_y) + c_y </script>
+<script type="math/tex; mode=display"> b_w = p_w*exp(t_w) </script>
+<script type="math/tex; mode=display"> b_h = p_h*exp(t_h) </script>
+<script type="math/tex; mode=display"> Pr(object) * IOU(b, object) = \theta(t_o) </script>
+</p>
+<p>其中<script type="math/tex"> b_x， b_y，b_w， b_h </script>为预测的bounding box相当于先验框anchor box的偏移。 <script type="math/tex"> \sigma </script>表示sigmoid函数，用于将<script type="math/tex"> t_x， t_y </script>约束在[0, 1]之间，<script type="math/tex"> c_x， c_y </script>表示每个cell相对于图像左上角的距离，
+这样经过约束，得到的anchor box中心坐标可以约束在当前cell中，稳定训练。</p>
+<p>综上，yolov2在预测框中心坐标的时候采用yolov1的方法，预测宽高回归时候采用Faster RCNN的公式。该方法能够更准确地确定目标的位置和大小，并且能够更高效地进行目标检测。</p>
+<p><img alt="" src="../../img/05/06/anchor.png" /></p>
+<h2 id="fine-grained-features">Fine-Grained Features</h2>
+<p>这点和后来的多尺度预测很接近了。仅在最终的13<em>13的尺度图上进行预测，缺少很多细节信息，对检测小目标不友好。因此一个直观的想法是将26</em>26尺度的信息拼接到
+最终的特征图上。</p>
+<p>所以作者采用了转移层（ passthrough layer），先将26<em>26</em>512的特征图通过space2depth变为13 * 13 * 2048的特征图，然后与网络后面的13<em>13</em>1024特征图concat在一起形成13<em>13</em>3072的特征图，最后在该特征图上卷积做预测。</p>
+<p>space2depth的操作如下图所示，将相邻四个像素在通道维进行重排，获得空间为1/4，而通道数变为以前的4倍的特征图。</p>
+<p><img alt="" src="../../img/05/06/space.png" /></p>
+<h2 id="multi-scale-training">Multi-Scale Training</h2>
+<p>由于YOLOv2中只有卷积层和池化层，因此不需要固定的输入图片的大小。所以作者采用了多尺度训练提升网络鲁棒性。
+即在使用检测数据集finetune整个网络的过程中，每迭代一定的次数，随机选择新的图片大小训练网络。</p>
+<p>作者采用32的倍数作为输入的size，具体采用320、352、384、416、448、480、512、544、576、608共10种size。
+不同的输入，最后产生的格点数不同，比如输入图片是320<em>320，那么输出格点是10</em>10，如果每个格点的先验框个数设置为5，那么总共输出500个预测结果；如果输入图片大小是608<em>608，输出格点就是19</em>19，共1805个预测结果。</p>
+<p>这种机制使得网络可以更好地预测不同尺寸的图片，意味着同一个网络可以进行不同分辨率的检测任务</p>
+<h2 id="faster">Faster</h2>
+<p>作者采用Darknet-19作为新的分类网络结构，网络比较简洁，采用了较多的3*3卷积，参数量比VGG16小，但在ImageNet上，可以达到top-1 72.9%以及top-5 91.2%的精度。
+网络结构组成如下图所示</p>
+<p><img alt="" src="../../img/05/06/darknet19.png" /></p>
+<h2 id="_2">参考</h2>
+<p>https://arxiv.org/pdf/1612.08242.pdf
+https://blog.csdn.net/lwplwf/article/details/82895409</p>
 
 <div id="disqus_thread"></div>
 <script>
