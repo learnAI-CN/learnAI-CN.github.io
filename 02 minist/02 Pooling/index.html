@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/02%20minist/02%20Pooling/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>池化层 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20LeNet/">再次实现minist</a>
+</li>
+
+        
+            
+<li >
+    <a href="../08%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20Text%20Rendering/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../01%20Convolution/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../03%20Activation/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#_1">池化层</a></li>
+        
+            <li><a href="#_2">作用</a></li>
+        
+            <li><a href="#_3">最大池化层</a></li>
+        
+            <li><a href="#_4">均值池化层</a></li>
+        
+            <li><a href="#_5">最大池化和均值池化的优缺点</a></li>
+        
+            <li><a href="#_6">全局池化层</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="_1">池化层</h1>
+<p>在网络设计中，我们常常使用<def>池化层（Pooling Layer）</def> 减小特征图的尺寸和参数数量，从而减少计算量和内存消耗，同时提高模型的鲁棒性和泛化能力。</p>
+<h2 id="_2">作用</h2>
+<p>池化层作为神经网络中的一个重要组成部分，主要有以下几个作用：</p>
+<p>减小特征图尺寸：池化层可以通过降低特征图的尺寸，减少神经网络中的参数数量和计算量，从而加速神经网络的训练和推理过程。</p>
+<p>提取主要特征：池化层可以通过对特征图进行降维，保留输入特征图的主要特征，同时减少噪声和冗余信息的影响，提高模型的鲁棒性和泛化能力。</p>
+<p>增强模型的平移不变性：池化层可以将输入特征图中的局部特征转换成全局特征，从而增强模型对于平移不变性的适应能力。这对于图像识别和物体检测等应用非常重要。</p>
+<p>提高模型的泛化能力：池化层可以减少特征图中的噪声和冗余信息，从而提高模型的泛化能力，使得模型更加鲁棒和可靠。</p>
+<p>总之，池化层作为神经网络中的一个重要组成部分，可以有效地减少参数数量和计算量，同时提取主要特征和增强模型的平移不变性，从而提高模型的性能和泛化能力。</p>
+<h2 id="_3">最大池化层</h2>
+<p>最大池化层将输入特征图分割成若干个大小相等的矩形区域，对于每个区域中的像素，取其最大值作为该区域的输出值。最大池化的具体实现步骤如下：</p>
+<p>将输入特征图分割成若干个大小相等的矩形区域，通常使用2×2的矩形区域。</p>
+<p>对于每个区域中的像素，取其最大值作为该区域的输出值。</p>
+<p>将所有输出值按照相同的顺序排列，得到最终的输出特征图。</p>
+<p>其具体实现过程如下：</p>
+<p><img alt="" src="../../img/02/02/maxpooling.jpg" /></p>
+<p>这里展示的是最常用的分割区域为2×2，步长为2的最大池化操作，每次将分割区域中最大的值作为输出特征图中的结果。</p>
+<p>函数实现</p>
+<pre><code class="language-python">torch.nn.MaxPool2d(kernel_size, stride=None, padding=0)
+</code></pre>
+<p>具体参数解释如下</p>
+<ul>
+<li>kernel_size: 定义核大小，即从多大的局部特征图中计算</li>
+<li>stride: 定义步长，需要降采样几倍就可以设置为几，一般定义为2</li>
+<li>padding: 定义padding大小</li>
+</ul>
+<h2 id="_4">均值池化层</h2>
+<p>均值池化层与最大池化层的操作一模一样，区别在于均值池化在对kernel size内局部感受野计算过程中，不再是提取最大值，而是计算均值。</p>
+<p>下图是最常用的分割区域为2×2，步长为2的均值池化操作</p>
+<p><img alt="" src="../../img/02/02/avepooling.jpg" /></p>
+<p>函数实现</p>
+<pre><code class="language-python">torch.nn.MaxPool2d(kernel_size, stride=None, padding=0)
+</code></pre>
+<p>具体参数解释如下</p>
+<ul>
+<li>kernel_size: 定义核大小，即从多大的局部特征图中计算</li>
+<li>stride: 定义步长，需要降采样几倍就可以设置为几，一般定义为2</li>
+<li>padding: 定义padding大小</li>
+</ul>
+<h2 id="_5">最大池化和均值池化的优缺点</h2>
+<p>均值池化层和最大池化层都是池化层中常用的类型，它们各有优缺点，具体如下：</p>
+<p>均值池化层：</p>
+<p>优点：</p>
+<ul>
+<li>可以减少特征图中的噪声和冗余信息，提高模型的鲁棒性和泛化能力。</li>
+<li>对于图像中的平滑区域，均值池化能够更好地平滑特征图，并且能够减小特征图中的噪声和冗余信息。</li>
+<li>
+<p>对于输入特征图的变化不敏感，对于输入特征图的微小变化会有较小的影响。
+缺点：</p>
+</li>
+<li>
+<p>对于图像中的边缘和纹理等信息的保留不如最大池化层，可能会降低模型的准确性。</p>
+</li>
+<li>对于输入特征图的变化不敏感，对于输入特征图中的重要信息可能会被平均化处理，导致模型性能下降。</li>
+</ul>
+<p>最大池化层：</p>
+<p>优点：</p>
+<ul>
+<li>能够更好地保留输入特征图中的边缘和纹理等重要信息，提高模型的准确性。</li>
+<li>
+<p>对于输入特征图的微小变化非常敏感，对于输入特征图的重要信息能够得到更好的保留。
+缺点：</p>
+</li>
+<li>
+<p>对于图像中的平滑区域，最大池化可能会忽略一些重要信息。</p>
+</li>
+<li>对于特征图中的噪声和冗余信息的影响不如均值池化，可能会导致模型的鲁棒性和泛化能力下降。</li>
+</ul>
+<p>综上所述，均值池化和最大池化各有优缺点，应根据具体的应用场景和需求进行选择。在一些需要保留细节信息的任务中，最大池化可能更适合；而在一些需要平滑特征图并减少噪声和冗余信息的任务中，均值池化可能更适合。</p>
+<h2 id="_6">全局池化层</h2>
+<p>全局池化层（Global Pooling Layer）是一种池化层中的一种类型。通常用于卷积神经网络的最后一层，用于将特征图转换成一维向量，并将其输入到全连接层中进行分类或回归等任务。
+其实说白了他就是上面最大池化层和均值池化层的一种特殊形式，当kernel size和输入特征尺寸相同时，就变成了全局池化层。</p>
+<ul>
+<li>全局最大池化层：对每个特征图提取最大值，得到特征数相同，尺寸为1*1的输出</li>
+<li>全局均值池化层：对每个特征图计算均值，得到特征数相同，尺寸为1*1的输出。</li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
