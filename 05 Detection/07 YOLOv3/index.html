@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/05%20Detection/07%20YOLOv3/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>YOLOv3 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../06%20YOLOv2/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../../06%20Transformer/01%20Debugging/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#yolov3">YOLOv3</a></li>
+        
+            <li><a href="#_1">改进内容</a></li>
+        
+            <li><a href="#backbone">Backbone网路</a></li>
+        
+            <li><a href="#_2">多尺度预测</a></li>
+        
+            <li><a href="#_3">特征融合</a></li>
+        
+            <li><a href="#_4">损失函数</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="yolov3">YOLOv3</h1>
+<p>YOLOv3是yolo作者更新的第三个版本，此后便放弃了继续更新，因此现在提到的yolov4-v7 其实是其他作者在yolo后继续更新的工作，故而我也暂时先写到v3，以后想的话会继续做其他介绍。</p>
+<h2 id="_1">改进内容</h2>
+<p>相对于yolov2， v3版本的改进如下：</p>
+<ul>
+<li>Backbone网络</li>
+<li>多尺度预测</li>
+<li>特征融合</li>
+</ul>
+<h2 id="backbone">Backbone网路</h2>
+<p>YOLOv3使用了Darknet-53作为其主干网络，它比YOLOv2中使用的Darknet-19更深更强大，能够提取更丰富的特征。</p>
+<p>DarkNet-53结构如下：</p>
+<p><img alt="darknet51" src="../../img/05/07/darknet51.png" class="img-center" width="60%" /></p>
+<p>从中可以看出网络全部采用卷积实现，包括降采样也是通过控制卷积步长=2来实现。网络总共经过5次尺度衰减，最终获得输入尺寸1/32的特征图，所以希望输入为32的整数倍。当输入为416时，最后一层的输出为尺寸为13。
+相比与Darknet-19，DarkNet-53借鉴了残差连接的思想，便于信息传递。</p>
+<h2 id="_2">多尺度预测</h2>
+<p>在之前的yolov2中，是采用最后一层输出，每个cell预测5个bounding box。在yolov3的改进中，作者借鉴FPN的思想，利用金字塔结构，在网络降采样的三个不同尺度特征上，每个cell分别预测三个bounding box。
+网络的具体结构如下：</p>
+<p><img alt="" src="../../img/05/07/yolov3.jpg" /></p>
+<p>从图中可以看出网络在不同尺度上输出了三个不同特征图，分别是<script type="math/tex"> y_1, y_2, y_3 </script>。他们的通道数都是255，宽高分别为13，26，52。尺寸小的预测输出用来检测图像中的大目标，尺寸大的特征图用来检测图像中精细的小目标。</p>
+<p>现在来介绍一下255的含义，在coco数据中包含80个类别，所以需要80个通道用来对每个类别进行预测。而每个预测的bounding box需要包含<script type="math/tex"> t_x, t_y, t_w, t_h, y_o </script>五个值，这点和yolov2是一样的，所以需要5个通道来实现。
+又因为同一个尺度的特征图里每个cell预测3个bounding box，所以需要<script type="math/tex"> 3 * (80 + 5) = 255 </script>个通道。</p>
+<p>网络每层的特征图会预测<script type="math/tex"> N*N*3 </script>个bounding box，其中N=13，26，52。故总共会输出<script type="math/tex"> (13*13 + 26*26 + 52*52) * 3 = 10647 </script>个特征图。</p>
+<p>此外，网络还需要三种尺度上3个不同的先验anchor box。作者同样采用k-means的思想进行聚类获得，他们的尺寸分别为</p>
+<ul>
+<li>第一个尺度的 anchor 尺寸为：10 x 13, 16 x 30, 33 x 23</li>
+<li>第二个尺度的 anchor 尺寸为：30 x 61, 62 x 45, 59 x 119</li>
+<li>第三个尺度的 anchor 尺寸为：116 x 90, 156 x 198, 373 x 326</li>
+</ul>
+<h2 id="_3">特征融合</h2>
+<p>在计算<script type="math/tex"> y_2, y_3 </script>的时候，网络采用UNet融合深浅层特征图的思想，通过解码结构对主干网络中的高级特征进行上采样，然后与编码其中的低级语义特征concat融合后进而预测bounding box。</p>
+<h2 id="_4">损失函数</h2>
+<p>计算第一个特征图f1的损失函数如下：</p>
+<p><img alt="" src="../../img/05/07/loss.png" /></p>
+<p>损失函数大致与yolov1类似，改动在最后一行分类损失上，将yolov1中的mse loss替换为交叉熵。这是因为yolov3在预测类别时，不再使用softmax而是采用sigmoid函数。</p>
+<p>当预测框为正例时，计算前三行中预测框信息的中心坐标、宽高、置信度损失 和 第五行的分类损失函数。当预测框为反例时，计算第四行的置信度loss。最终的损失函数是三个尺度的损失函数之和。</p>
+<p>网络总共预测的10647个框会被分为三类：正例，负例，忽略。</p>
+<ul>
+<li><def>正例（positive）</def>：任取一个ground truth，与所有10467个框全部计算IOU，IOU最大的预测框，即为正例。由于一个预测框只能预测一个gt，因此第二个gt只能和剩下的10466个框计算IOU并挑选正例。</li>
+<li><def>负例（negative）</def>：与全部ground truth的IOU都小于阈值（eg：0.5），则为负例。</li>
+<li><def>忽略（ignore）</def>：正例除外，与任意一个gt的IOU大于阈值（eg：0.5），则为忽略样例。</li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

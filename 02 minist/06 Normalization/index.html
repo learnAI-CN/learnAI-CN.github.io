@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/02%20minist/06%20Normalization/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>归一化层 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../05%20Optimization%20Algorithm/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../07%20LeNet/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#_1">归一化层</a></li>
+        
+            <li><a href="#_2">归一化层的思想</a></li>
+        
+            <li><a href="#_3">批归一化</a></li>
+        
+            <li><a href="#_4">实例归一化</a></li>
+        
+            <li><a href="#_5">组归一化</a></li>
+        
+            <li><a href="#_6">层归一化</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="_1">归一化层</h1>
+<p>在网络设计中，为了提高模型的泛化能力和收敛速度，常常会使用<def>归一化层（Normalization Layer）</def>。其主要作用是将输入数据进行归一化处理，使得模型更加稳定和可靠。</p>
+<p>归一化层主要解决两个问题：</p>
+<ul>
+<li>
+<p>梯度消失问题：深度神经网络中，由于层数较多，梯度会逐渐消失或爆炸，导致模型无法收敛或收敛速度非常慢。归一化层通过对输入数据进行归一化处理，使得数据的分布更加稳定，从而避免了梯度消失问题，加速模型的收敛速度。</p>
+</li>
+<li>
+<p>数据分布问题：深度神经网络中，输入数据的分布通常是不规则的，这会导致模型的学习过程非常困难，甚至无法收敛。归一化层通过对输入数据进行归一化处理，使得数据的分布更加规则，从而使得模型更加稳定和可靠。</p>
+</li>
+</ul>
+<h2 id="_2">归一化层的思想</h2>
+<p>如果模型的输入特征不相关且满足标准正态分布 <script type="math/tex"> \mathcal{N}(0, 1) </script>， 网络的训练会变得容易且效果变好。所以在处理数据时，我们一般会对<strong>输入</strong>标准化。而归一化层的目标就是对<strong>网络参数</strong>也进行标准化处理。</p>
+<p>随着网络训练的进行，网络隐藏层间的特征分布已经发生了偏移，又因为前面层的参数会影响后面层，所以通过层层叠加，很容易导致高层的输入分布剧烈。
+因此归一化层的思路就是不断的将网络参数进行标准化，更重要的是，处理完之后需要利用优化变一下方差大小和均值位置，使得新的分布更切合数据的真实分布，保证模型的非线性表达能力。
+为实现该目的，归一化层需要通过学习合适的\gamma, \beta 来自我修正新参数的分布。</p>
+<p>归一化层通常有以下几种类型：<def>批归一化层（Batch Normalization）、实例归一化（Instance Normalization）、层归一化（Layer Normalization）、组归一化（Group Normalization)</def>
+几种归一化方式如下图所示，每个矩形表示一个尺寸为(B,C,H,W)的特征图。蓝色表示不同的归一化方式通过哪些局部特征计算均值方差。所以不同归一化操作的区别仅仅在于选取哪部分特征标准化并学习新的均值和方差。</p>
+<p><img alt="" src="../../img/02/05/normalization.jpg" /></p>
+<p>接来下我们将对几种归一化方式进行一一介绍，如果您觉得容易混淆，那你只需要先学习批归一化即可。</p>
+<h2 id="_3">批归一化</h2>
+<p><def>批归一化（Batch Normalization， BN）</def>是最常用的归一化方式，具体计算过程包含如下三步。</p>
+<p>1、参数预定义
+   定义输入<script type="math/tex"> X = \left \{ X_{1...m} \right \} </script> 及 需要学习的参数<script type="math/tex"> \gamma, \beta </script>
+   定义输出<script type="math/tex"> y_i = BN_{\gamma, \beta}(x_i) </script>
+</p>
+<p>2、沿C维度对每个batch的数据进计算均值</p>
+<p>
+<script type="math/tex; mode=display"> \mu_B  \leftarrow \frac{1}{m}\sum_{i=1}^{m}(x_i) </script>
+</p>
+<p>3、沿C维度对每个batch的数据进计算方差</p>
+<p>
+<script type="math/tex; mode=display"> \sigma_B^2  \leftarrow \frac{1}{m}\sum_{i=1}^{m}(x_i - \mu_B)</script>
+</p>
+<p>4、对每个特征进行归一化处理，即将每个特征减去其均值，再除以其标准差。</p>
+<p>
+<script type="math/tex; mode=display"> \tilde{x_i}  \leftarrow \frac{x_i - \mu_B}{\sqrt{\sigma_B^2}} </script>
+</p>
+<p>5、对每个特征进行缩放和平移操作，即将每个特征乘以一个缩放因子，再加上一个偏移量。</p>
+<p>
+<script type="math/tex; mode=display"> y_i  \leftarrow \gamma \tilde{x_i} + \beta </script>
+</p>
+<p>使用BN后其对比效果如下图所示</p>
+<p><img alt="" src="../../img/02/06/bn_learn.png" /></p>
+<p>可以看出其可达到两个收益：1）收敛速度变快， 2）训练精度变高。</p>
+<p>目前在绝大多数网络设计中BN已经成为了标配。但BN有一个较为明显的缺点，其<strong>对批次数较为敏感</strong>。
+BN的计算需要依赖于batch size，较小的batch size可能导致BN效果不稳定，因此需要采用较大的batch size才能获得较好的效果。
+但与此同时，较大的batch size也会增加计算和存储的成本。</p>
+<p>批归一化层的pytorch定义如下</p>
+<pre><code class="language-python">torch.nn.BatchNorm2d(num_features, eps=1e-05, momentum=0.1, affine=True)
+</code></pre>
+<p>num_features 表示特征数，即输入的通道C数量
+affine: 默认为True,学习仿射参数</p>
+<p>使用代码如下</p>
+<pre><code class="language-python"># With Learnable Parameters
+m = nn.BatchNorm2d(100)
+# 输入形状为 [N,C,H,W]
+input = torch.randn(20, 100, 35, 45)
+# 输出形状为 [N,C,H,W]
+output = m(input)
+</code></pre>
+<h2 id="_4">实例归一化</h2>
+<p><def>实例归一化</def>是对一个样本的特征图进行归一化。对于一个大小为 CxHxW 的特征图，</p>
+<ul>
+<li>
+<p>首先计算每个通道上的均值和标准差，得到一个 Cx1x1 的均值向量和一个 Cx1x1 的标准差向量。</p>
+</li>
+<li>
+<p>对于特征图中的每个像素，将其减去对应通道的均值，并除以对应通道的标准差，得到一个归一化后的像素。</p>
+</li>
+<li>
+<p>对于归一化后的像素，将其乘以一个缩放因子，再加上一个偏移量，得到最终的输出。</p>
+</li>
+</ul>
+<p>相对于批归一化，实例归一化可以更好地保留每个样本的特征信息，因此在一些特定的应用场景中，如图像风格迁移、图像生成等，实例归一化更加适用。</p>
+<p>实例归一化层的pytorch定义如下</p>
+<pre><code class="language-python">torch.nn.InstanceNorm2d(num_features, eps=1e-05, momentum=0.1, affine=True)
+</code></pre>
+<h2 id="_5">组归一化</h2>
+<p><def>组归一化</def>的主要思想是将输入特征图分为多个<def>组（group）</def>，对每个组内的特征图进行归一化处理。具体来说，组归一化的计算过程如下：</p>
+<ul>
+<li>
+<p>将输入特征图分为 G 个组，每个组包含 C/G 个通道。</p>
+</li>
+<li>
+<p>对于每个组，计算其所有像素的均值和标准差，得到一个 C/Gx1x1 的均值向量和一个 C/Gx1x1 的标准差向量。</p>
+</li>
+<li>
+<p>对于特征图中的每个像素，将其减去对应组的均值，并除以对应组的标准差，得到一个归一化后的像素。</p>
+</li>
+<li>
+<p>对于归一化后的像素，将其乘以一个缩放因子，再加上一个偏移量，得到最终的输出。</p>
+</li>
+</ul>
+<p>实例归一化层的pytorch定义如下</p>
+<pre><code class="language-python">torch.nn.GroupNorm(num_groups, num_channels, eps=1e-05, affine=True, device=None)
+</code></pre>
+<ul>
+<li>num_groups (int): 从通道中选择的组数量</li>
+<li>num_channels (int) – 输入的通道数</li>
+</ul>
+<p>实例归一化层的pytorch用法如下</p>
+<pre><code class="language-python">import torch
+import torch.nn as nn
+input = torch.randn(20, 6, 10, 10)
+# eg1: 将6个通道分为3个组
+m = nn.GroupNorm(3, 6)
+output = m(input)
+
+# eg2: 将6个通道分为6个组 (相当于 InstanceNorm)
+m = nn.GroupNorm(6, 6)
+output = m(input)
+
+# eg3: 将6个通道分为1个组 (相当于 LayerNorm)
+m = nn.GroupNorm(1, 6)
+output = m(input)
+# Activating the module
+
+</code></pre>
+<h2 id="_6">层归一化</h2>
+<p><def>层归一化</def>相对较为特别，他主要用于对循环神经网络中的每个时间步的特征进行归一化。具体来说，层归一化的计算过程如下：</p>
+<ul>
+<li>
+<p>对于一个大小为 [T,H,W,C] 的特征图，首先计算每个时间步上所有像素的均值和标准差，得到一个 [T,1,1,C] 的均值向量和一个 [T,1,1,C] 的标准差向量。</p>
+</li>
+<li>
+<p>对于特征图中的每个像素，将其减去对应时间步的均值，并除以对应时间步的标准差，得到一个归一化后的像素。</p>
+</li>
+<li>
+<p>对于归一化后的像素，将其乘以一个缩放因子，再加上一个偏移量，得到最终的输出。</p>
+</li>
+</ul>
+<p>层归一化更适用于循环神经网络，可以更好地处理循环神经网络中时间步的依赖关系，同时也可以提高模型的泛化能力和性能。这点将在NLP领域表现的更为突出。</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

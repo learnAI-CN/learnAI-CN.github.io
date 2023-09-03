@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/03%20classicial%20model/07%20MobileNet/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>MoblieNet系列 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../06%20SENet/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../../04%20Segmentation/01%20Introduction/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#mobilenet">MobileNet</a></li>
+        
+            <li><a href="#_1">创新点</a></li>
+        
+            <li><a href="#_2">逐层卷积</a></li>
+        
+            <li><a href="#_3">逐点卷积</a></li>
+        
+            <li><a href="#_4">深度可分离卷积</a></li>
+        
+            <li><a href="#relu6">ReLU6</a></li>
+        
+            <li><a href="#_5">代码实现</a></li>
+        
+            <li><a href="#mobilenet-v2">MobileNet V2</a></li>
+        
+            <li><a href="#_6">创新点</a></li>
+        
+            <li><a href="#linear-bottlenecks">Linear Bottlenecks</a></li>
+        
+            <li><a href="#inverted-residuals">Inverted Residuals</a></li>
+        
+            <li><a href="#_7">讨论</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="mobilenet">MobileNet</h1>
+<p>MobileNet是由Google在2017年提出的一种轻量级神经网络模型，用于在移动设备上进行图像分类任务。
+本节主要目的在于通过MoblieNet使您学习了解<def>深度可分离卷积（Depthwise Separable Convolution）</def>。他具体又包括<def>逐层卷积（Depthwise Convolution，DW）</def>和<def>点卷积（Pointwise Convolution，PW）</def>。
+MobileNet系列包含V1-V3三个版本，我们主要介绍V1，V2两个版本，您可以接着自学V3版本。</p>
+<h2 id="_1">创新点</h2>
+<p>使用DW卷积和PW卷积降低网络参数</p>
+<h2 id="_2">逐层卷积</h2>
+<p>如果您还记得普通卷积的具体实现，你应该会记得加入输入是通道C，那我们需要同样C个通道的卷积核，才能得到一个输出的特征图。
+但DW Conv则是采用C个卷积核与输入逐通道分别进行卷积得到C个输出，具体实现图如下</p>
+<p><img alt="" src="../../img/03/07/dwconv.png" /></p>
+<p>如上图所示，第i通道的输入特征图与第i个卷积核计算卷积，这样导致的问题是通道之间没有信息交流，因此紧接着就要使用PW Conv。</p>
+<p>现在我们来计算一下DW卷积的参数量和计算量。
+假设输入特征图尺寸是<script type="math/tex"> [W_{in}, H_{in}, C_{in}] </script>，卷积核表示为<script type="math/tex"> [W_k, H_k, C_{in}] </script>。</p>
+<ul>
+<li>参数量: <script type="math/tex"> W_k * H_k * C_in </script>
+</li>
+<li>计算量: <script type="math/tex"> W_{in} * H_{in} * W_k * H_k * C_{in} </script>
+</li>
+</ul>
+<h2 id="_3">逐点卷积</h2>
+<p><def>逐点卷积（Pointwise Convolution）</def>本质上就是使用1x1的卷积核对所有通道进行卷积。用来促进通道间的交流，同时进行升维或者降维。
+逐点卷积的实现图示如下</p>
+<p><img alt="" src="../../img/03/07/pwconv.png" /></p>
+<p>现在我们来计算一下PW卷积的计算量。
+假设输入特征图尺寸是<script type="math/tex"> [W_{in}, H_{in}, C_{in}] </script>，卷积核为<script type="math/tex"> [1, 1, C_{in}] </script>。输出通道数为<script type="math/tex"> C_out </script>。</p>
+<ul>
+<li>参数量: <script type="math/tex"> C_in * C_out </script>
+</li>
+<li>计算量：<script type="math/tex"> W_{in} * H_{in} * C_{in} * C_{out} </script>
+</li>
+</ul>
+<h2 id="_4">深度可分离卷积</h2>
+<p>之前我们提到<def>深度可分离卷积</def>由DW卷积和PW卷积两部分组成。在MobileNet中具体替换方式如下图所示：</p>
+<p><img alt="depthwise sperate convolution" src="../../img/03/07/dswconv.jpg" class="img-center" width="50%" /></p>
+<p>如上图所示，左边表示标准卷积，右边表示替换掉的DW和PW卷积。首先3x3卷积替换为3x3的DW Conv。BN，ReLU不变。
+之后紧接着使用一个1x1的卷积，BN，ReLU操作。</p>
+<p>现在我们回想一下标准卷积的参数量和计算量</p>
+<ul>
+<li>参数量：<script type="math/tex"> W_k * H_k * C_{in} * C_{out} </script>
+</li>
+<li>计算量：<script type="math/tex"> W_k * H_k * C_{in} * C_{out} * W_{in} * H_{in} </script>
+</li>
+</ul>
+<p>现在考虑一下当标准卷积替换为深度可分离卷积后参数量和计算量的变化。</p>
+<ul>
+<li>参数量：</li>
+</ul>
+<p>
+<script type="math/tex; mode=display">  \frac{W_k * H_k * C_{in} + C_{in} * C_{out}}{W_k * H_k * C_{in} * C_{out}} = \frac{1}{N} + \frac{1}{W_k * H_k}  </script>
+</p>
+<ul>
+<li>计算量：</li>
+</ul>
+<p>
+<script type="math/tex; mode=display">  \frac{W_{in} * H_{in} * W_k * H_k * C_{in} + W_{in} * H_{in} * C_{in} * C_{out}}{W_k * H_k * C_{in} * C_{out} * W_{in} * H_{in}} = \frac{1}{N} + \frac{1}{W_k * H_k}  </script>
+</p>
+<p>所以如果是卷积核为3x3的标准卷积，参数量和运算量都会降为原来的1/9左右。
+与GoogleNet和VGG16相比，其准确率一般降低1%左右。</p>
+<h2 id="relu6">ReLU6</h2>
+<p>现在需要多提一下的是，在图示中的ReLU实际使用的是ReLU6，这里多加的一个6是用来将输出在[0, 6]之间截断，用公式表示为</p>
+<p>
+<script type="math/tex; mode=display"> y = ReLU6(x) = min(max(0, x), 6) </script>
+</p>
+<p>ReLU6的好处主要包括以下几个方面：</p>
+<ul>
+<li>
+<p>防止梯度消失和梯度爆炸：ReLU6可以防止输出值过大，避免梯度消失和梯度爆炸等问题，从而提高模型的稳定性和泛化能力。</p>
+</li>
+<li>
+<p>增强非线性特性：ReLU6增强了修正线性单元的非线性特性，可以提高模型的表达能力和泛化能力。</p>
+</li>
+<li>
+<p>适用于移动设备：ReLU6可以用于移动设备上的神经网络模型，可以实现高效的计算和存储。</p>
+</li>
+</ul>
+<p>但在一些高精度的任务中，ReLU6可能会影响模型的精度和泛化能力</p>
+<h2 id="_5">代码实现</h2>
+<p>深度可分离卷积的代码实现如下</p>
+<pre><code class="language-python">def conv_dsw(inp, oup, stride):
+    return nn.Sequential(
+        nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False),
+        nn.BatchNorm2d(inp),
+        nn.ReLU(inplace=True),
+
+        nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
+        nn.BatchNorm2d(oup),
+        nn.ReLU(inplace=True),
+    )
+</code></pre>
+<p>可以看到实现中dw conv实际就是将groups参数设置为输入的通道数。而pw conv就是卷积核为1的普通卷积。</p>
+<h2 id="mobilenet-v2">MobileNet V2</h2>
+<p>MobileNet V2是对V1版本的改进与提升，如标题所示，其创新点在于提出了<def>Inverted Residuals</def>和<def>Linear Bottlenecks</def>。</p>
+<h2 id="_6">创新点</h2>
+<ul>
+<li>Inverted Residuals</li>
+<li>Linear Bottlenecks</li>
+</ul>
+<h2 id="linear-bottlenecks">Linear Bottlenecks</h2>
+<p>在DW Conv的使用过程中，发现训练完的卷积核存在大量为0的情况，进而是的神经元输出为0，而这个过程是不可逆的。
+作者认为这是ReLU导致的问题。</p>
+<p>首先作者定义经过一系列卷积和激活层的会输出<def>兴趣流型(manifold of interest）</def>。在下采样时，兴趣流型映射到低维子空间中。
+在此过程中如果使用ReLU这种非线性激活函数，会导致信息坍塌。</p>
+<p>为此作者尝试了一个简单的实验，如下图所示</p>
+<p><img alt="" src="../../img/03/07/ReluDim.jpg" /></p>
+<p>将最左边的输入经过一个矩阵T映射到不同维度，然后使用ReLU进行激活，再利用<script type="math/tex"> T^{-1} </script>映射回低维输入得到输出。该过程可以表达为：</p>
+<p>
+<script type="math/tex; mode=display"> \hat{x} = T^{-1}ReLU(Tx) </script>
+</p>
+<p>从右侧不同的图像可以看出，经过ReLU函数后，当维度越高信息损失就越少。如dim=15/30时，经过relu映射回二维空间，信息损失较少。
+当dim=2/3/5时，经过relu映射回二维空间，信息损失较多。</p>
+<p>据此可认为，在低维空间使用relu会损失较多信息。这也解释了之前遇到的训练后的卷积核大量为0的情况。</p>
+<p>针对这个问题，作者在Bottleneck模块的降维处采用linear作为激活函数，其结构如下图所示</p>
+<p><img alt="" src="../../img/03/07/linearBottoneck.jpg" /></p>
+<p>至于为什么只在最后采用linear作为激活函数，是因为前面提到的从高维向低维转换，使用ReLU激活函数可能会造成信息丢失或破坏。</p>
+<h2 id="inverted-residuals">Inverted Residuals</h2>
+<p>此外，作者参考ResNet提出了<def>Inverted Residuals</def>结构。模块如下图所示：</p>
+<p><img alt="" src="../../img/03/07/inversedRes.jpg" /></p>
+<ul>
+<li>pw Conv: 与V1版本不同，作者在模块前后分别用一个1x1卷积进行维度控制。在输入时将维度拓展为输入的6倍，输出时转为输入维度。</li>
+<li>dw Conv：通过维度扩张，dw conv可以在一个更高维的空间中进行卷积操作来提取特征。避免低维的效果不好的问题。</li>
+<li>激活层：作者在第一个pw conv和dw conv后依旧采用ReLU6激活函数，在第二个pw conv后使用线性激活函数。</li>
+<li>残差连接：作者参考ResNet使用短连接结构复用输入特征。</li>
+</ul>
+<p>因为Resnet是先降维再升维，而作者相反是先升维再降维，所以作者将这个结构命名为Inverted residuals。</p>
+<h2 id="_7">讨论</h2>
+<p>MobileNet系列希望通过使用深度可分离卷积降低网络参数与运算量，提升网络在手机上的推理效果。
+但Flops和运算时间并非简单的线性关系，很多时候网络推理会收访问内存的带宽限制。如果是在gpu端还好，一些专门的npu上可能dw conv甚至不如一般卷积。
+此外，MobileNet也一直面临量化性能下降过多的影响。这里我先简单提一下，等之后有机会单独做成小节。</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

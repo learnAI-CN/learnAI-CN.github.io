@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/02%20minist/05%20Optimization%20Algorithm/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>优化函数 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../04%20Fully%20conection/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../06%20Normalization/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#_1">优化算法</a></li>
+        
+            <li><a href="#_2">介绍</a></li>
+        
+            <li><a href="#_3">梯度下降</a></li>
+        
+            <li><a href="#_4">随机梯度下降</a></li>
+        
+            <li><a href="#_5">动量优化法</a></li>
+        
+            <li><a href="#_6">学习率</a></li>
+        
+            <li><a href="#_7">自适应学习率优化算法</a></li>
+        
+            <li><a href="#rmsprop">RMSProp</a></li>
+        
+            <li><a href="#adam">Adam</a></li>
+        
+            <li><a href="#_8">实现</a></li>
+        
+            <li><a href="#_9">评价</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="_1">优化算法</h1>
+<h2 id="_2">介绍</h2>
+<p>什么是优化算法，他是用来找一批神经网络的参数 <script type="math/tex"> \theta </script>, 可以使损失函数显著降低的算法。
+举个例子，深度学习实际就是使用网络去拟合一个复杂的函数，希望求出这个函数的最优解。但一般来说这个函数非常复杂，所以我们通过梯度下降一点点的修改网络参数。
+所以在<a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">计算异或</a>的时候，我们计算梯度后，利用公式
+<script type="math/tex; mode=display"> 参数 -= -lr * 梯度 </script>
+</p>
+<p>来更新网络参数， 这种利用<def>迭代</def>的思想来尽可能的逼近问题最优解的算法就是优化算法。</p>
+<p>常见的优化算法包括常见的优化算法包括梯度下降（Gradient Descent）、随机梯度下降（Stochastic Gradient Descent，SGD）、自适应梯度算法（Adaptive Gradient Algorithm，AdaGrad）、自适应矩估计算法（Adaptive Moment Estimation，Adam）等</p>
+<p>下图展示了理想情况下，优化算法在寻找全局最优解时候的优化路径</p>
+<p><img alt="Gradient Descent" src="../../img/02/05/GD.png" class="img-center" width="80%" /></p>
+<p>图中z轴表示目标函数，越小越好。<def>局部最优解</def>或者说<def>局部最小点</def>表示此处梯度为0，此处的目标函数f(x)小于<strong>周围</strong>的任何点的目标函数，但它并非是全局的最优点。<def>全局最优点</def>表示此处梯度为0，且此处的目标函数f(x)小于<strong>作用域</strong>内任意点的目标函数。</p>
+<h2 id="_3">梯度下降</h2>
+<p>介绍中举例的方法就是<def>梯度下降法</def>，他是最常用的一种优化算法。在每次迭代中，计算所有数据的梯度，然后在当前位置寻找梯度下降最快的方向，来逐渐逼近优化的目标函数。且离目标函数越近，逼近的“步伐”也就越小。
+梯度下降法的更新公式为：
+<script type="math/tex; mode=display"> \theta_{t+1} = \theta_t - \eta \cdot \triangledown_{\theta}J(\theta) </script>
+<script type="math/tex"> \eta </script>表示学习率，控制每次参数更新的幅值大小；符号表示顺着梯度的反方向；<script type="math/tex"> \triangledown_{\theta}J(\theta) </script>表示梯度。</p>
+<p>用图像表示如下</p>
+<p><img alt="" src="../../img/02/05/GD2.png" /></p>
+<p>特别注意的是，梯度下降法虽然每次都是向全局最优解方向更新，但不一定能够找到全局的最优解，很有可能找到的是一个局部最优解。</p>
+<h2 id="_4">随机梯度下降</h2>
+<p>由于梯度下降每次需要计算所有数据的梯度，导致运算时间长，运算复杂度大。因此<def>随机梯度下降(Stochastic Gradient Descent，SGD)</def>考虑计算一批随机数据的梯度来代替全部数据的梯度，进而更新参数。
+在每次选取样本<script type="math/tex"> (x^i, y^i ) </script>计算后，参数更新公式为
+<script type="math/tex; mode=display"> \theta_{t+1} = \theta_t - \eta \cdot \triangledown_{\theta}J(\theta, x^i, y^i) </script>
+</p>
+<p>SGD的好处是计算速度快，每次迭代并不是都向着整体最优化方向，导致梯度下降的波动非常大，反而容易跳出局部最优解。</p>
+<p>缺点是每批次数据是随机的，所以计算的代价函数会有严重震荡，不过可以通过减小学习率缓解。</p>
+<h2 id="_5">动量优化法</h2>
+<p>为了实现更加平稳和快速的参数更新，提高模型的性能。一般会在梯度下降的基础上，引入<def>动量</def>的概念。</p>
+<p>动量的概念来自物理学，当我们将一个小球从山上滚下来，没有阻力时，它的动量会越来越大，但是如果遇到了阻力，速度就会变小。但不至于遇到一个小坑就出不来，因为还有之前的一股&rdquo;冲劲&rdquo;，如此避免进入局部最小值。</p>
+<p>具体来说，<def>动量优化法</def>在每一次迭代中，不仅使用当前的梯度信息进行参数更新，还引入一个动量向量，用于记录之前参数更新的方向和大小。使得梯度方向在不变的维度上，参数更新变快，梯度有所改变时，更新参数变慢。
+动量向量可以在参数更新的过程中，平滑地引导参数的移动方向，从而减少参数更新的震荡和波动，提高模型的收敛速度和稳定性。</p>
+<p>动量优化法的更新公式为：</p>
+<p>
+<script type="math/tex; mode=display"> v_t = \beta v_{t-1} + (1 - \beta) \nabla J(\theta) </script>
+<script type="math/tex; mode=display"> θ = θ - \eta v_t </script>
+</p>
+<p>其中v表示动量， <script type="math/tex"> \beta </script>是动量系数，<script type="math/tex"> \nabla J(\theta) </script>是损失函数关于模型参数的梯度，<script type="math/tex"> \theta </script>是模型参数，<script type="math/tex"> \alpha </script>是学习率。</p>
+<h2 id="_6">学习率</h2>
+<p>在之前的梯度下降算法中，我们一直在使用一个参数 <script type="math/tex"> \eta </script>，<def>学习率</def>。它用于控制模型参数在每一次迭代中的更新步长和速度。
+较小的学习率会导致模型收敛速度较慢，但可能会得到更准确的结果；而较大的学习率会导致模型收敛速度较快，但可能会出现震荡和不稳定的情况。
+下图中，左边展示了学习率过大导致的震荡，右边为学习率太小导致的收敛过慢的问题。</p>
+<p><img alt="" src="../../img/02/05/learning_rate.png" /></p>
+<p>通常，学习率的选择和调整可以采用以下几种方法：</p>
+<ul>
+<li>
+<p>固定学习率：在模型训练过程中，将学习率固定为一个常数值，不随着迭代次数的增加而改变。这种方法比较简单，但可能会导致模型收敛速度较慢或出现过拟合等问题。</p>
+</li>
+<li>
+<p>学习率衰减：在模型训练过程中，随着迭代次数的增加，逐渐降低学习率的大小。学习率衰减方法可以加速模型的收敛速度，避免过拟合和震荡等问题。</p>
+</li>
+<li>
+<p>自适应学习率：在模型训练过程中，根据模型的参数更新情况，自适应地调整学习率的大小。常见的自适应学习率算法包括 AdaGrad、RMSprop、Adam 等。</p>
+</li>
+</ul>
+<p>最后一点你看不懂没关系，我们接下来就详细介绍一下。</p>
+<h2 id="_7">自适应学习率优化算法</h2>
+<p>刚才我们谈到学习率的设置需要和训练过程共同使用，且过大或者过小都不行，因此如何设置学习率是一件至关重要的事情。</p>
+<p>此外，梯度下降中学习率对每个维度都是相同的，这限制了对不同维度的适应问题。因此<def>Adagrad算法</def>根据自变量在每个维度的梯度值的大小来调整各个维度上的学习率，从而避免统一的学习率难以适应所有维度的问题。</p>
+<p>Adagrad算法的基本思想是对每个参数的历史梯度平方进行累加，并将其作为学习率的分母，从而使得对于频繁出现的参数，其学习率相对较小，而对于不频繁出现的参数，其学习率相对较大。</p>
+<p>具体来说，他在原来的基础上加入了一个梯度的累加变量 <script type="math/tex"> S_t </script>,</p>
+<p>
+<script type="math/tex; mode=display"> S_t \leftarrow  S_{t-1} + g_t \odot g_t </script>
+</p>
+<p>然后对学习率根据累加梯度进行调整，</p>
+<p>
+<script type="math/tex; mode=display"> x_t \leftarrow x_{t-1} - \frac{ \alpha }{ \sqrt{s_t+\epsilon } } \odot g_t </script>
+</p>
+<p>其中 <script type="math/tex"> \epsilon </script>是一个很小的数字，为了维持数值的稳定性。</p>
+<p>Adagrad算法是一种自适应学习率的优化算法，它在每个参数上使用不同的学习率，根据参数的历史梯度来自适应地调整学习率，以便于在训练初期时有更大的学习率，后期则逐渐减小学习率。</p>
+<p>Adagrad算法的缺点是会使得学习率逐渐变小，最终可能导致学习率过小而难以收敛。</p>
+<h2 id="rmsprop">RMSProp</h2>
+<p>鉴于Adagrad 使学习率变小的缺点，<def>RMSProp</def>使用了和动量法类似的思想，对梯度和累加变量利用指数加权平均，</p>
+<p>
+<script type="math/tex; mode=display"> S_t \leftarrow  \gamma S_{t-1} + (1-\gamma )g_t \odot g_t </script>
+</p>
+<p>然后将目标函数自变量中每个元素的学习率通过按元素运算重新调整，更新自变量，</p>
+<p>
+<script type="math/tex; mode=display"> x_t \leftarrow x_{t-1} - \frac{ \alpha }{ \sqrt{s_t+\epsilon } } \odot g_t </script>
+</p>
+<h2 id="adam">Adam</h2>
+<p><def>Adam</def>是在RMSProp的基础上，引入动量的想法改进的，不仅对累加状态变量 <script type="math/tex"> s_t </script> 进行指数加权平均，还对每一个小批量的梯度 <script type="math/tex"> g_t </script> 进行指数加权平均。</p>
+<p>1、首先对动量变量进行加权平均</p>
+<p>
+<script type="math/tex; mode=display"> v_t \leftarrow  \beta_1 v_{t-1} + (1-\beta_1 )g_t </script>
+</p>
+<p>2、对状态变量的指数加权平均</p>
+<p>
+<script type="math/tex; mode=display"> s_t \leftarrow  \beta_2 s_{t-1} + (1-\beta_2 )g_t \odot g_t </script>
+</p>
+<p>默认<script type="math/tex"> \beta_1=0.9 </script> , <script type="math/tex"> \beta_2=0.999 </script>。所以方差估计的移动远远慢于动量估计的移动。</p>
+<p>3、
+如果 mt 和 vt 被初始化为 0 向量，那它们就会向 0 偏置，进而导致学习率过大，从而影响模型的收敛。
+因此Adam算法中使用了偏差校正来消除初始偏差的影响，使得在初始阶段学习率不会过大，从而提高模型的收敛速度和泛化能力。</p>
+<p>
+<script type="math/tex; mode=display"> \hat{v_t} = \frac{ v_t }{ 1 - \beta_1^t } </script>
+</p>
+<p>
+<script type="math/tex; mode=display"> \hat{s_t} = \frac{ s_t }{ 1 - \beta_2^t } </script>
+</p>
+<p>4、更新参数</p>
+<p>
+<script type="math/tex; mode=display"> x_t \leftarrow x_{t-1} - \frac{ \alpha\hat{v_t}  }{ \sqrt{\hat{s_t}+\epsilon } } </script>
+</p>
+<h2 id="_8">实现</h2>
+<p>简单介绍一下SGD和Adam在pytorch中如何实现，主要分为定义和更新两步</p>
+<pre><code class="language-python">import torch
+import torch.optim as optim
+
+# 定义模型
+model = ...
+
+# 定义损失函数
+criterion = ...
+
+# 定义优化器，学习率为0.01，动量为0.9
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+# 定义优化器，学习率为0.001
+# optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# 训练模型
+for epoch in range(num_epochs):
+    for inputs, labels in train_loader:
+        # 前向传播
+        outputs = model(inputs)
+        loss = criterion(outputs, labels)
+
+        # 反向传播
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+</code></pre>
+<p>在使用优化器时，需要将模型的参数传递给优化器对象，然后在每次训练迭代时调用<fun>optimizer.zero_grad()</fun>清空梯度缓存，调用<fun>loss.backward()</fun>计算梯度，最后调用<fun>optimizer.step()</fun>更新模型参数。可以根据实际需求调整优化器的超参数，如学习率、动量、权重衰减等。</p>
+<h2 id="_9">评价</h2>
+<p>由于SGD和Adam是比较具有代表性的两种优化方法，因此我们将对他们进行评价。</p>
+<p>Adam算法的优点：</p>
+<ul>
+<li>
+<p>自适应性：Adam算法可以自适应地调整每个参数的学习率，根据参数的历史梯度来自适应地调整学习率，从而加快收敛速度，提高模型的泛化能力。</p>
+</li>
+<li>
+<p>可以处理稀疏梯度：Adam算法可以处理稀疏梯度，对于很多实际问题来说，梯度通常是稀疏的，这时使用Adam算法会比SGD更加稳定。</p>
+</li>
+<li>
+<p>不需要手动调整学习率：Adam算法不需要手动调整学习率，因为它可以自适应地调整每个参数的学习率，从而避免了手动调整学习率的麻烦和不确定性。</p>
+</li>
+</ul>
+<p>Adam算法的缺点：</p>
+<ul>
+<li>需要更多的计算资源：Adam算法需要更多的计算资源，因为它需要维护每个参数的一阶矩和二阶矩，而SGD只需要维护一阶梯度即可。</li>
+</ul>
+<p>SGD算法的优点：</p>
+<ul>
+<li>
+<p>计算简单：SGD算法的计算量比较小，只需要计算每个参数的一阶梯度，因此可以节省计算资源。</p>
+</li>
+<li>
+<p>对小数据集效果较好：对于小数据集，SGD算法的效果通常比Adam算法更好，因为小数据集中的梯度通常比较稳定，不需要使用自适应学习率的方法。</p>
+</li>
+</ul>
+<p>SGD算法的缺点：</p>
+<ul>
+<li>
+<p>容易陷入局部最优解：SGD算法容易陷入局部最优解，因为它只考虑了当前的梯度方向，可能会错过全局最优解。</p>
+</li>
+<li>
+<p>需要手动调整学习率：SGD算法需要手动调整学习率，因为学习率过大会导致震荡，学习率过小会导致收敛速度过慢。手动调整学习率需要经验和尝试，比较麻烦。</p>
+</li>
+</ul>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

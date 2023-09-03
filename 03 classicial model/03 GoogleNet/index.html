@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/03%20classicial%20model/03%20GoogleNet/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>GoogLeNet - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/04%20overfitting/">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20HardWayToDeep/05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../07%20MobileNet/">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../02%20VGG/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../04%20ResNet/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#googlenet">GoogLeNet</a></li>
+        
+            <li><a href="#googlenet_1">GoogLeNet特点</a></li>
+        
+            <li><a href="#googlenet_2">GoogLeNet网络结构</a></li>
+        
+            <li><a href="#inception">Inception</a></li>
+        
+            <li><a href="#_1">辅助分类器</a></li>
+        
+            <li><a href="#mean-pooling">mean pooling</a></li>
+        
+            <li><a href="#_2">其他个人看法</a></li>
+        
+            <li><a href="#_3">代码实现</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="googlenet">GoogLeNet</h1>
+<p><def>GoogLeNet</def>是由Google团队在2014年提出的一个卷积神经网络模型，也被称为<def>Inception V1</def>。GoogLeNet的主要贡献在于提出了一种基于Inception模块的网络结构，可以在保证网络深度和计算效率的同时，提高网络的准确性和泛化能力。
+GoogLeNet在ImageNet数据集上取得了当时最好的分类准确率，成为了深度学习图像分类领域的经典算法。</p>
+<h2 id="googlenet_1">GoogLeNet特点</h2>
+<ul>
+<li>提出Inception模块</li>
+<li>使用辅助分类器</li>
+</ul>
+<h2 id="googlenet_2">GoogLeNet网络结构</h2>
+<p>GoogLeNet的网络结构非常深且复杂，由22个卷积层和全连接层组成，其中使用了多个Inception模块来提高网络的性能和泛化能力。
+Inception模块是一个由多个卷积核和池化操作组成的网络单元，可以提高网络的非线性表达能力和感受野，从而更好地捕捉图像中的特征。</p>
+<p>GoogLeNet网络结构如下
+<img alt="" src="../../img/03/03/googlenet.png" /></p>
+<p>真的是太复杂了，但我们如果将inception结构合并到一起，就可以简化很多。</p>
+<p><img alt="" src="../../img/03/03/googlenet2.svg" /></p>
+<p>GoogLeNet在主体卷积部分中使用5个模块（block），每个模块之间使用步幅为2的3 ×3最大池化层来减小输出高宽。</p>
+<ul>
+<li>第一模块使用一个64通道的7 × 7卷积层。</li>
+<li>第二模块使用2个卷积层:首先是64通道的1 × 1卷积层，然后是将通道增大3倍的3 × 3卷积层。</li>
+<li>第三模块串联2个完整的Inception块。</li>
+<li>第四模块串联了5个Inception块。</li>
+<li>第五模块串联了2 个Inception块。</li>
+<li>第五模块的后面紧跟输出层，使用全局平均池化层来将每个通道的高和宽变成1，最后接上一个输出个数为标签类别数的全连接层。</li>
+</ul>
+<h2 id="inception">Inception</h2>
+<p>现在可以好好的谈谈Inception模块了。 
+网络设计中一个重点问题是什么样大小的卷积核最合适的。 毕竟，以前流行的网络使用小到1x1，大到11x11的卷积核。 本文的一个观点是，有时使用不同大小的卷积核组合是有利的。
+Inception就是把多个卷积或池化操作，放在一起组装成一个网络模块，设计神经网络时以模块为单位去组装整个网络结构。</p>
+<p><img alt="" src="../../img/03/03/inception0.jpg" /></p>
+<p>在未使用这种方式的网络里，我们一层往往只使用一种操作，比如卷积或者池化，而且卷积操作的卷积核尺寸也是固定大小的。
+但是，在实际情况下，在不同尺度的图片里，需要不同大小的卷积核，这样才能使性能最好，所以在一个Inception模块中并列提供多种卷积核的操作，网络在训练的过程中通过调节参数自己去选择使用。
+同时，由于网络中都需要池化操作，此处也把池化层并列加入网络中。</p>
+<p>但是这个结构存在很多问题，是不能够直接使用的。首要问题就是参数太多，导致特征图厚度太大。为了解决这个问题，作者在其中加入了1X1的卷积核，改进后的Inception结构如下图
+<img alt="" src="../../img/03/03/inception.jpg" /></p>
+<p>这样做有两个好处，首先是大大减少了参数量，其次，增加的1X1卷积后面也会跟着有非线性激励，这样同时也能够提升网络的表达能力。</p>
+<p>之所以卷积核大小采用1、3和5，主要是为了方便对齐。设定卷积步长stride=1之后，只要分别设定pad=0、1、2，那么卷积之后便可以得到相同维度的特征，然后这些特征就可以直接拼接在一起了；</p>
+<p>网络越到后面，特征越抽象，而且每个特征所涉及的感受野也更大了，因此随着层数的增加，3x3和5x5卷积的比例也要增加。但是，使用5x5的卷积核仍然会带来巨大的计算量。 为此，文章采用1x1卷积核来进行降维。</p>
+<h2 id="_1">辅助分类器</h2>
+<p>为了避免梯度消失，网络额外增加了2个辅助的softmax用于向前传导梯度。这里的<def>辅助分类器</def>只是训练时将三个分类器的损失函数进行加权求和，以缓解梯度消失现象。在正常预测时会被去掉。
+辅助分类器促进了更稳定的学习和更好的收敛，往往在接近训练结束时，辅助分支网络开始超越没有任何分支的网络的准确性，达到了更高的水平。</p>
+<h2 id="mean-pooling">mean pooling</h2>
+<p>googleNet包括最后的mean pooling替代FC层提升了0.6%的准确率，如果您对之前内容还熟悉，之前网络都是采用将最后的特征图展开为一维向量，然后链接FC层。
+但本文证明用全局平均池化可以在提升准确率的同时，减少网络参数。</p>
+<h2 id="_2">其他个人看法</h2>
+<p>其实GoogLenet并不是一个讨我喜的网络，因为他的很多改进其实在后来的网络中应用较少。比如说</p>
+<p>1）网络是要加深还是加宽？
+这点在后来的实践中更多是加深网路，但是GoogleNet系列的主要思路是加宽。</p>
+<p>2）网络设计是否该简化？
+在上节VGG我们提到他的主要优点是简单，但是googleNet的Inception过于复杂了。虽说之后的网络会更加复杂，但作为经典网络还是简单有效的好。</p>
+<p>3）mean pooling 还是 max pooling？
+作者采用了Overlap mean pooling，这个前面AlexNet类似，kernel size=3，stride=2。
+究竟用不用overlap，要mean还是max虽说没有定论，有机会好好讨论讨论</p>
+<p>4）辅助分类器好吗？
+辅助分类器的想法是loss如果经过太多层回传，浅层不容易得到有效回传信息，因此如果采用辅助loss可以更好的训练浅层网络。
+这点在后续一些其他任务的工作中也有使用，且证明有效的。但问题依旧在简洁性上。该方法总感觉算是trike，这样设计网络不够优雅，
+所以后面很多网络其实并没有采用这种方式，因为影响网络的整体性。</p>
+<h2 id="_3">代码实现</h2>
+<pre><code class="language-python">import torch
+import torch.nn as nn
+
+class Inception(nn.Module):
+    def __init__(self, input_channels, n1x1, n3x3_reduce, n3x3, n5x5_reduce, n5x5, pool_proj):
+        super().__init__()
+
+        #1x1conv branch
+        self.b1 = nn.Sequential(
+            nn.Conv2d(input_channels, n1x1, kernel_size=1),
+            nn.BatchNorm2d(n1x1),
+            nn.ReLU(inplace=True)
+        )
+
+        #1x1conv -&gt; 3x3conv branch
+        self.b2 = nn.Sequential(
+            nn.Conv2d(input_channels, n3x3_reduce, kernel_size=1),
+            nn.BatchNorm2d(n3x3_reduce),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n3x3_reduce, n3x3, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n3x3),
+            nn.ReLU(inplace=True)
+        )
+
+
+        #1x1conv -&gt; 5x5conv branch
+        #we use 2 3x3 conv filters stacked instead
+        #of 1 5x5 filters to obtain the same receptive
+        #field with fewer parameters
+        self.b3 = nn.Sequential(
+            nn.Conv2d(input_channels, n5x5_reduce, kernel_size=1),
+            nn.BatchNorm2d(n5x5_reduce),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n5x5_reduce, n5x5, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n5x5, n5x5),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(n5x5, n5x5, kernel_size=3, padding=1),
+            nn.BatchNorm2d(n5x5),
+            nn.ReLU(inplace=True)
+        )
+
+        #3x3pooling -&gt; 1x1conv
+        #same conv
+        self.b4 = nn.Sequential(
+            nn.MaxPool2d(3, stride=1, padding=1),
+            nn.Conv2d(input_channels, pool_proj, kernel_size=1),
+            nn.BatchNorm2d(pool_proj),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, x):
+        return torch.cat([self.b1(x), self.b2(x), self.b3(x), self.b4(x)], dim=1)
+
+
+class GoogleNet(nn.Module):
+
+    def __init__(self, num_class=100):
+        super().__init__()
+        self.prelayer = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 64, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(64, 192, kernel_size=3, padding=1, bias=False),
+            nn.BatchNorm2d(192),
+            nn.ReLU(inplace=True),
+        )
+
+        #although we only use 1 conv layer as prelayer,
+        #we still use name a3, b3.......
+        self.a3 = Inception(192, 64, 96, 128, 16, 32, 32)
+        self.b3 = Inception(256, 128, 128, 192, 32, 96, 64)
+
+        ##&quot;&quot;&quot;In general, an Inception network is a network consisting of
+        ##modules of the above type stacked upon each other, with occasional
+        ##max-pooling layers with stride 2 to halve the resolution of the
+        ##grid&quot;&quot;&quot;
+        self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
+
+        self.a4 = Inception(480, 192, 96, 208, 16, 48, 64)
+        self.b4 = Inception(512, 160, 112, 224, 24, 64, 64)
+        self.c4 = Inception(512, 128, 128, 256, 24, 64, 64)
+        self.d4 = Inception(512, 112, 144, 288, 32, 64, 64)
+        self.e4 = Inception(528, 256, 160, 320, 32, 128, 128)
+
+        self.a5 = Inception(832, 256, 160, 320, 32, 128, 128)
+        self.b5 = Inception(832, 384, 192, 384, 48, 128, 128)
+
+       #input feature size: 8*8*1024
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.dropout = nn.Dropout2d(p=0.4)
+        self.linear = nn.Linear(1024, num_class)
+
+    def forward(self, x):
+        x = self.prelayer(x)
+        x = self.maxpool(x)
+        x = self.a3(x)
+        x = self.b3(x)
+
+        x = self.maxpool(x)
+
+        x = self.a4(x)
+        x = self.b4(x)
+        x = self.c4(x)
+        x = self.d4(x)
+        x = self.e4(x)
+
+        x = self.maxpool(x)
+
+        x = self.a5(x)
+        x = self.b5(x)
+
+        #&quot;&quot;&quot;It was found that a move from fully connected layers to
+        #average pooling improved the top-1 accuracy by about 0.6%,
+        #however the use of dropout remained essential even after
+        #removing the fully connected layers.&quot;&quot;&quot;
+        x = self.avgpool(x)
+        x = self.dropout(x)
+        x = x.view(x.size()[0], -1)
+        x = self.linear(x)
+
+        return x
+
+</code></pre>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

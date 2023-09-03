@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="我对DNN知识系统整理的一次尝试">
+        
+        <link rel="canonical" href="https://learnai-cn.github.io/02%20HardWayToDeep/04%20overfitting/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+
+	<title>过拟合/欠拟合 - LearnAI-CN</title>
+
+        <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../../css/highlight.css">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link href="../../css/style.css" rel="stylesheet">
+        <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+          ga('create', 'UA-80323542-1', 'auto');
+          ga('send', 'pageview');
+        </script>
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../..">LearnAI-CN</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="../..">主页</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">目录 <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        
+<li >
+    <a href="../../intro/">简介</a>
+</li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">入门</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/01%20Introduction/">深度学习介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/02%20Perceptron/">感知机</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/03%20XOR/">异或操作</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/04%20S%20neural/">s型神经元</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/05%20loss%20functional/">损失函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/06%20Backpropagation/">反向传播算法</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../01%20Getting%20started/07%20Selflearning%20XOR/">自学习异或操作</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">走向深度</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../01%201Channel%20minist/">minist实现</a>
+</li>
+
+        
+            
+<li >
+    <a href="../02%20Gradient%20vanishing/">梯度消失/爆炸</a>
+</li>
+
+        
+            
+<li >
+    <a href="../03%20generalization/">泛化性</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">过拟合/欠拟合</a>
+</li>
+
+        
+            
+<li >
+    <a href="../05%20regulization/">正则化</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">实现minist</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/00%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/01%20Convolution/">卷积层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/02%20Pooling/">池化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/03%20Activation/">激活层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/04%20Fully%20conection/">全连接层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/05%20Optimization%20Algorithm/">优化函数</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/06%20Normalization/">归一化层</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/07%20LeNet/">LeNet实现minist</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">深入介绍</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/01%20DNN%20feature/">DNN特性</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/02%20pooling%20BP/">池化层反向传播</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/03%20Receptive%20Field/">感受野</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../02%20minist/09%20Deep%20introduce/04%20WhyDCNNUseful/">为什么卷积有效</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">经典神经网络</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/01%20AlexNet/">AlexNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/02%20VGG/">VGG</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/03%20GoogleNet/">GoogLeNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/04%20ResNet/">ResNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/05%20DenseNet/">DenseNet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/06%20SENet/">SENet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../03%20classicial%20model/07%20MobileNet/">MoblieNet系列</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">分割任务</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../04%20Segmentation/01%20Introduction/">介绍与基础</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/02%20FCN/">FCN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/03%20UNet/">Unet</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/04%20DeepLab%E7%B3%BB%E5%88%97/">DeepLab系列</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../04%20Segmentation/05%20DANet/">DANet</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">检测</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../05%20Detection/01%20Introduction/">介绍</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/02%20RCNN/">RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/03%20Fast%20RCNN/">Fast RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/04%20Faster%20RCNN/">Faster RCNN</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/05%20YOLOv1/">YOLOv1</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/06%20YOLOv2/">YOLOv2</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../05%20Detection/07%20YOLOv3/">YOLOv3</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">Transformer</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../06%20Transformer/01%20Debugging/">Transformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/02%20ViT/">ViT</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/03%20SwinTransformer/">SwinTransformer</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/04%20DETR/">DETR</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/05%20TransSeg/">TransFormer分割</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../06%20Transformer/06%20CLIP/">CLIP</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">AIGC</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../07%20AIGC/01%20Theory/">理论</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">细分方向</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/Denoise/01%20Paper%20list/">Denoise</a>
+</li>
+
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">SuperResolution</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/01%20SISR%20Paper%20list/">SISR Paper list</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/SuperResolution/02%20VSR%20Paper%20list/">VSR Paper list</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+            
+<li >
+    <a href="../../08%20Subdivision%20direction/zero%20shot/01%20Paper%20list/">zero shot</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+  <li class="dropdown-submenu">
+    <a tabindex="-1" class="nav-title">机器学习</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../09%20Mechine%20Learning/01%20Theory/">介绍</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                    
+                        
+<li >
+    <a href="../../legacy/">历史存档</a>
+</li>
+
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../../code_repo/">代码仓库</a>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> 搜索
+                    </a>
+                </li>
+                <li >
+                    <a rel="next" href="../03%20generalization/">
+                        <i class="fa fa-arrow-left"></i> 上一节
+                    </a>
+                </li>
+                <li >
+                    <a rel="prev" href="../05%20regulization/">
+                        下一节 <i class="fa fa-arrow-right"></i>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="https://github.com/learnAI-CN/learnAI-code">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="/img/self.png">
+                            <img class="paypal" src="/img/paypal_logo.png" alt="">
+                        关于作者
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#_1">过拟合/欠拟合</a></li>
+        
+            <li><a href="#_2">欠拟合效果展示</a></li>
+        
+            <li><a href="#_3">欠拟合产生原因</a></li>
+        
+            <li><a href="#_4">欠拟合解决方法</a></li>
+        
+            <li><a href="#_5">过拟合效果展示</a></li>
+        
+            <li><a href="#_6">过拟合产生原因</a></li>
+        
+            <li><a href="#_7">过拟合解决方法</a></li>
+        
+            <li><a href="#_8">参考</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="_1">过拟合/欠拟合</h1>
+<p>导致泛化性差有两个很重要的原因，即<def>过拟合（Overfitting）</def>和<def>欠拟合（Underfitting）</def>。本节将详细介绍一下</p>
+<p>下图可以形象的展示欠拟合和过拟合的形式，我们希望网络学习数据的二次函数分布。欠拟合的问题在于拟合的公式太简单，只学到了线性分布，无法描述大多数数据集的分布。
+过拟合反而过于追求每一个训练集的分布，学习到了四阶函数，导致拟合公式过于复杂，有点类似于死记硬背，没有理解数据背后的规律，泛化能力差。</p>
+<p><img alt="" src="../../img/02-hard/04/Overfitting.png" /></p>
+<h2 id="_2">欠拟合效果展示</h2>
+<p>当我们使用<a href="../01%201Channel%20minist/">minist实现</a>中识别minist的代码进行修改，定义第二层网络神经元个数为10的话，</p>
+<pre><code class="language-python">if __name__==&quot;__main__&quot;:
+    net = network.Network([784, 10, 10]) 
+
+    net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
+
+</code></pre>
+<p>训练最终可以得到以下输出：</p>
+<pre><code class="language-python">Epoch 27 : 9196 / 10000
+Epoch 28 : 9198 / 10000
+Epoch 29 : 9182 / 10000
+</code></pre>
+<p>结果只能达到91%，很明显这比30个隐藏神经元的效果差，这种模型在训练集上的表现较差，无法很好地拟合训练数据的真实分布的情况被称为欠拟合。</p>
+<h2 id="_3">欠拟合产生原因</h2>
+<p>造成欠拟合的原因主要有：</p>
+<p>1、模型复杂度过低：当模型过于简单时，模型无法学习到训练数据中的复杂关系，导致模型无法很好地拟合数据。例如，在图像分类任务中，如果模型只有一层线性层，那么模型的表达能力就非常有限，无法很好地拟合数据。</p>
+<p>2、数据量过少：当训练数据量过少时，模型的泛化能力也会受到限制，因为模型没有足够的数据来学习数据的真实分布。例如，在图像分类任务中，如果只有很少的图像数据可用于训练，那么模型就很难学习到图像数据的复杂特征和关系。</p>
+<p>3、过度的正则化：当过度使用正则化技术（如L1正则化、L2正则化、Dropout等）时，模型可能会过于简单，从而导致欠拟合的问题。例如，在使用L1正则化时，如果正则化权重太大，那么模型可能会过于稀疏，无法学习到训练数据中的复杂特征和关系。</p>
+<p>4、特征不足：当特征提取不足时，模型无法很好地学习到数据中的关键特征，从而导致欠拟合的问题。例如我们需要训练一个模型来预测一个人的体重，但是我们只使用了身高这一个特征。可能存在身高相同但体重不同的情况，因此模型可能无法很好地拟合数据，出现欠拟合的问题。如果我们增加更多的特征，如年龄、性别、饮食习惯等预测效果会更好。</p>
+<h2 id="_4">欠拟合解决方法</h2>
+<p>为了解决欠拟合问题，可以采用以下方法：</p>
+<p>增加模型复杂度：当模型过于简单时，可以通过增加模型复杂度来提高模型的拟合能力。例如可以通过增加模型的层数、增加每层的神经元数、使用更复杂的激活函数等方法来增加模型的复杂度。</p>
+<p>增加数据量：增加数据量是解决欠拟合问题的最有效方法之一。更多的数据可以帮助模型更好地学习数据的真实分布，从而提高模型的泛化能力。</p>
+<p>特征工程：特征工程是指对原始数据进行一些预处理和特征提取，从而提高模型的泛化能力。例如可以通过特征选择、特征变换、特征提取等方法来增加模型的拟合能力。</p>
+<h2 id="_5">过拟合效果展示</h2>
+<p>那是不是网络中间层数量变多效果就会提升呢，我们尝试将网络中间参数设为两层100看看训练结果。</p>
+<pre><code class="language-python">if __name__==&quot;__main__&quot;:
+    net = network.Network([784, 100,  100, 10]) 
+
+    net.SGD(training_data, 30, 10, 3.0, test_data=test_data)
+</code></pre>
+<p>实验发现训练的精度提升了，但是测试精度反而下降了。
+这种现象被我们称为过拟合，是指模型在学习训练数据时过度拟合了训练数据的细节和噪声，导致模型对新数据的预测不准确。</p>
+<h2 id="_6">过拟合产生原因</h2>
+<p>造成过拟合的原因主要有：</p>
+<p>模型过于复杂：当模型过于复杂时，它可能会过度拟合训练数据中的噪声和细节，而不是学习数据的潜在规律。过于复杂的模型可能会有太多的参数，使得它们可以拟合任何训练数据，但是这会导致泛化能力不足，无法很好地适应新数据。</p>
+<p>数据不足：当训练数据较少时，模型可能会过度拟合训练数据，因为它们无法从有限的数据中学习到足够的信息，无法很好地泛化到新数据。此时可以通过数据增强等技术来扩充训练数据集，以减少过拟合的风险。</p>
+<p>过度训练：当模型训练时间过长时，可能会导致过拟合。如果模型在训练数据上训练得足够好，但是训练时间过长，它可能会过于自信，过度拟合训练数据中的噪声和细节。因此，可以通过早停等技术来避免过度训练。</p>
+<p>特征不足：当模型所使用的特征不足以捕捉数据的复杂性时，可能会出现过拟合的问题。如果模型无法从训练数据中学习到足够的信息，它可能会过度拟合训练数据中的噪声和细节，而不是学习数据的潜在规律。因此，应该选择合适的特征，并对其进行适当的处理和组合，以减少过拟合的风险。</p>
+<h2 id="_7">过拟合解决方法</h2>
+<p>增加数据量：增加数据量是解决过拟合问题的最有效方法之一。更多的数据可以帮助模型更好地学习数据的真实分布，从而提高模型的泛化能力。</p>
+<p>简化模型：减少模型的复杂度可以减少模型对噪声和细节的拟合，从而提高模型的泛化能力。例如可以通过减少模型的层数、减少每层的神经元数、使用正则化等方法来简化模型。</p>
+<p>使用正则化技术：正则化技术可以限制模型的复杂度，防止模型过度拟合训练数据。常用的正则化技术包括L1正则化、L2正则化、Dropout等。</p>
+<p>交叉验证：交叉验证是一种评估模型泛化能力的方法，可以评估模型在不同数据集上的性能，从而避免过拟合的问题。</p>
+<p>提前终止：在训练过程中，可以通过监控模型在验证集上的性能，来判断模型是否已经过拟合。一旦模型在验证集上的性能开始下降，就可以提前终止训练，从而避免过拟合的问题。</p>
+<h2 id="_8">参考</h2>
+<p>https://github.com/mnielsen/neural-networks-and-deep-learning/blob/master/src/network.py</p>
+
+<div id="disqus_thread"></div>
+<script>
+    (function() {
+        var d = document, s = d.createElement('script');
+
+        s.src = '//learnopengl-cn.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>请启用JavaScript以浏览<a href="https://disqus.com/?ref_noscript" rel="nofollow">Disqus评论。</a></noscript></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <center>Powered by <a href="http://www.mkdocs.org/">MkDocs</a> and <a href="http://bootswatch.com/yeti/">Yeti</a></center>
+        </footer>
+
+        <script src="../../js/jquery-1.10.2.min.js"></script>
+        <script src="../../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../../js/highlight.pack.js"></script>
+        <script>var base_url = '../..';</script>
+        <script src="../../js/base.js"></script>
+        <script src="../../mathjax/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">搜索</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            请在下面输入你要搜索的文本（仅支持英文）：
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="搜索..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
